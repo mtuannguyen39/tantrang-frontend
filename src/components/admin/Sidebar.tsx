@@ -2,8 +2,9 @@ import {
   Home,
   LayoutDashboard,
   Calendar,
-  ListTodo,
-  Settings,
+  ScrollText,
+  Newspaper,
+  Heart,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -15,19 +16,24 @@ const navItems = [
     href: "/admin",
   },
   {
-    label: "Appointments",
+    label: "Tin tức",
+    icon: <Newspaper size={20} />,
+    href: "/admin/news",
+  },
+  {
+    label: "Năm Phụng Vụ",
     icon: <Calendar size={20} />,
-    href: "/admin",
+    href: "/admin/liturgical-years",
   },
   {
-    label: "Tasks",
-    icon: <ListTodo size={20} />,
-    href: "/admin",
+    label: "Kinh Thánh",
+    icon: <ScrollText size={20} />,
+    href: "/admin/bible-readings",
   },
   {
-    label: "Settings",
-    icon: <Settings size={20} />,
-    href: "/admin",
+    label: "Thiếu nhi Thánh Thể",
+    icon: <Heart size={20} />,
+    href: "/admin/tntt",
   },
 ];
 const Sidebar = () => {
