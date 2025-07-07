@@ -3,6 +3,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Image from "next/image";
 
 interface NewsItem {
   id: number;
@@ -60,12 +61,13 @@ export default function AdminNewsPage() {
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
+
         const uploadRes = await axios.post(
           "http://localhost:3001/api/news/upload",
           formData
         );
 
-        thumbnailUrl = uploadRes.data.url;
+        thumbnailUrl = uploadRes.data.url; // /uploads/123456.jpeg
       }
 
       if (!categoryId) {
@@ -170,15 +172,30 @@ export default function AdminNewsPage() {
                 </option>
               ))}
             </select>
-            <input
-              type="file"
-              className="border rounded p-2"
-              onChange={(e) => {
-                if (e.target.files?.[0]) {
-                  setFile(e.target.files[0]);
-                }
-              }}
-            />
+            <div className="flex items-center gap-4">
+              <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                Chọn hình ảnh
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files?.[0]) {
+                      setFile(e.target.files[0]);
+                    }
+                  }}
+                />
+              </label>
+
+              {file && (
+                <Image
+                  src={URL.createObjectURL(file)}
+                  alt="Preview"
+                  className="object-cover rounded border"
+                  width={160}
+                  height={160}
+                />
+              )}
+            </div>
             <div className="flex gap-4">
               <input
                 type="checkbox"

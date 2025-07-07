@@ -81,7 +81,7 @@ export default function NewsList() {
           </Button>
         ))}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         {currentPage === 1 && featured && (
           <NewsCard
             key={featured.id}
@@ -89,14 +89,16 @@ export default function NewsList() {
             title={featured.title}
             thumbnail={`http://localhost:3001${featured.thumbnail}`}
             isFeatured
+            className="col-span-2 row-span-2"
           />
         )}
-        {paginatedNews.map((item) => (
+        {others.slice(0, 4).map((item) => (
           <NewsCard
             key={item.id}
             id={item.id}
             title={item.title}
             thumbnail={`http://localhost:3001${item.thumbnail}`}
+            className=""
           />
         ))}
       </div>
