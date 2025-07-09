@@ -1,1 +1,19 @@
-import React from "react";
+import axios from "axios";
+
+export async function getNewsDetail(id: number) {
+  try {
+    const res = await axios.get(`http://localhost:3001/api/news/${id}`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch news detail:", err);
+  }
+}
+
+export async function getNewsList() {
+  try {
+    const res = await axios.get(`http://localhost:3001/api/news/`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch news list:", err);
+  }
+}

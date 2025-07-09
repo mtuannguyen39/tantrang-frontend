@@ -1,7 +1,14 @@
+import NewsList from "@/modules/news/ui/components/news-list";
 import React from "react";
 
-const page = () => {
-  return <div>page</div>;
+const Page = () => {
+  return (
+    <div>
+      <div>
+        <NewsList />
+      </div>
+    </div>
+  );
 };
 
-export default page;
+export default Page;
