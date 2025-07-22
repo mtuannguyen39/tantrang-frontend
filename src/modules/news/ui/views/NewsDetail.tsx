@@ -55,18 +55,19 @@ export default function NewsDetail() {
         </Link>
       </div>
       {/* Chi tiết tin tức */}
-      <div className="max-w-3xl px-4 py-8 bg-white rounded-md">
+      <div className="min-w-3xl px-4 py-8 bg-white rounded-md">
         <h1 className="text-3xl font-bold mb-4 text-gray-900">{news.title}</h1>
         {news.thumbnail && (
           <Image
-            src={`http://localhost:3001${news.thumbnail}`}
+            // src={news.thumbnail}
+            src={news.thumbnail}
             alt={news.title}
             width={800}
             height={400}
             className="rounded-lg mb-6 w-full object-cover"
           />
         )}
-        <div className="text-gray-900 font-medium leading-relaxed whitespace-pre-line text-justify">
+        <div className="text-gray-900 font-medium leading-relaxed whitespace-pre-line text-wrap text-justify">
           {news.content}
         </div>
         {/* Tin tức khác */}
@@ -75,14 +76,15 @@ export default function NewsDetail() {
           {relatedNews.length > 0 ? (
             <ul className="space-y-4 grid grid-cols-4 gap-4">
               {relatedNews.map((item) => (
-                <li key={item.id} className="flex items-center gap-4">
+                <li key={item.id} className="flex gap-4">
                   <Link
                     href={`/news/${item.id}`}
                     className="flex flex-col gap-4 overflow-hidden"
                   >
                     {item.thumbnail && (
                       <Image
-                        src={`http://localhost:3001${item.thumbnail}`}
+                        // src={item.thumbnail}
+                        src={item.thumbnail}
                         alt={item.title}
                         width={100}
                         height={60}

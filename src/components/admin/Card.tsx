@@ -2,9 +2,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Users, FileText, BarChart2 } from "lucide-react";
 
 async function getDashboardStats() {
-  const res = await fetch("http://localhost:3001/api/admin/stats", {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    // "https://tantrang-backend.onrender.com/api/admin/stats",
+    "http://localhost:3001/api/admin/stats",
+    {
+      cache: "no-store",
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Fetching stats error");

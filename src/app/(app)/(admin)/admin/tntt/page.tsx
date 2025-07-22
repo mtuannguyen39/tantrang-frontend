@@ -34,7 +34,10 @@ export default function AdminTnttPage() {
 
   async function fetchTntt() {
     try {
-      const res = await axios.get("http://localhost:3001/api/tntt");
+      const res = await axios.get(
+        // "https://tantrang-backend.onrender.com/api/tntt",
+        "http://localhost:3001/api/tntt"
+      );
       setTntt(res.data);
     } catch (err) {
       throw new Error("Failed to fetch TNTT list:");
@@ -43,7 +46,10 @@ export default function AdminTnttPage() {
 
   async function fetchCategories() {
     try {
-      const res = await axios.get("http://localhost:3001/api/category");
+      const res = await axios.get(
+        // "https://tantrang-backend.onrender.com/api/category",
+        "http://localhost:3001/api/category"
+      );
       setCategories(res.data);
     } catch (err) {
       throw new Error("Failed to fetch categories list:");
@@ -63,6 +69,7 @@ export default function AdminTnttPage() {
         formData.append("file", file);
 
         const uploadRes = await axios.post(
+          // "https://tantrang-backend.onrender.com/api/tntt/upload",
           "http://localhost:3001/api/tntt/upload",
           formData
         );
@@ -85,10 +92,18 @@ export default function AdminTnttPage() {
 
       if (editingId !== null) {
         // Update existing TNTT
-        await axios.put(`http://localhost:3001/api/tntt/${editingId}`, payload);
+        await axios.put(
+          // `https://tantrang-backend.onrender.com/api/tntt/${editingId}`,
+          `http://localhost:3001/api/tntt/${editingId}`,
+          payload
+        );
       } else {
         // Add TNTT
-        await axios.post("http://localhost:3001/api/tntt", payload);
+        await axios.post(
+          // "https://tantrang-backend.onrender.com/api/tntt",
+          "http://localhost:3001/api/tntt",
+          payload
+        );
       }
 
       setTitle("");
@@ -104,12 +119,54 @@ export default function AdminTnttPage() {
     }
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: number, thumbnailUrl?: string) {
+    // Xác nhận từ người dùng trước khi xóa
+    if (!window.confirm("Bạn có chắc chắn muốn xóa tin tức này không?")) return;
     try {
-      await axios.delete(`http://localhost:3001/api/tntt/${id}`);
+      // 1. Gửi yêu cầu xóa tin tức từ database
+      await axios.delete(
+        // `https://tantrang-backend.onrender.com/api/tntt/${id}`
+        `http://localhost:3001/api/tntt/${id}`
+      );
+
+      // 2. Nếu có hình, gửi yêu cầu xóa hình ảnh từ server
+      if (thumbnailUrl) {
+        try {
+          // Gửi đường dẫn tương đối của ảnh để backend xóa
+          const deleteImageRes = await axios.delete(
+            // "https://tantrang-backend.onrender.com/api/tntt/delete-image",
+            "http://localhost:3001/api/tntt/delete-image",
+            {
+              data: {
+                imageUrl: thumbnailUrl, // Đây là nơi backend sẽ extrach filename từ URL này
+              },
+            }
+          );
+          console.log("Image delete response: ", deleteImageRes.data.message);
+        } catch (imageDeleteError: any) {
+          console.error("Failed to delete image on server:", imageDeleteError);
+
+          // Xử lý các loại bug khác nhau từ backend
+          if (imageDeleteError.response?.status === 404) {
+            console.warn(
+              "Image file not found on server, but news was deleted successfully"
+            );
+          } else if (imageDeleteError.response?.status === 403) {
+            console.error("Access denied when deleting image");
+            alert("Không có quyền xóa ảnh, nhưng tin tức đã bị xóa");
+          } else {
+            alert("Xóa ảnh không thành công, nhưng tin tức đã bị xóa");
+          }
+          // Bạn có thể hiển thị thông báo lỗi cho người dùng
+          // Vì tin tức chính đã bị xóa khỏi Database
+          // alert("Xóa ảnh không thành công, nhưng tin tức đã bị xóa");
+        }
+      }
       fetchTntt();
-    } catch (err) {
+      alert("Tin tức đã được xóa thành công!");
+    } catch (err: any) {
       console.error("Failed to delete tntt:", err);
+      alert("Xóa tin tức thất bại. Vui lòng thử lại!");
     }
   }
 
@@ -226,7 +283,8 @@ export default function AdminTnttPage() {
               >
                 {item.thumbnail && (
                   <img
-                    src={`http://localhost:3001${item.thumbnail}`}
+                    // src={`https://tantrang-backend.onrender.com${item.thumbnail}`}
+                    src={item.thumbnail}
                     alt="Thumbnail"
                     className="w-40 h-28 object-cover"
                   />
@@ -251,7 +309,7 @@ export default function AdminTnttPage() {
                 <div className="flex justify-end space-x-3">
                   <button
                     className="bg-[#ff2525] text-white h-[100%] w-20 rounded cursor-pointer hover:opacity-79"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => handleDelete(item.id, item.thumbnail)}
                   >
                     Delete
                   </button>
