@@ -31,19 +31,29 @@ export default function AdminNewsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [isFeatured, setIsFeatured] = useState<boolean>(false);
+  const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
+    string | undefined
+  >(undefined);
 
   async function fetchNews() {
     try {
-      const response = await axios.get("http://localhost:3001/api/news");
+      const response = await axios.get(
+        // "https://tantrang-backend.onrender.com/api/news"
+        "http://localhost:3001/api/news"
+      );
       setNews(response.data);
     } catch (error) {
-      console.error("Fetching news error:", error);
+      console.error("Lỗi khi tải tin tức.", error);
+      alert("Không thể tải danh sách tin tức. Vui lòng thử lại!!!");
     }
   }
 
   async function fetchCategories() {
     try {
-      const res = await axios.get("http://localhost:3001/api/category");
+      const res = await axios.get(
+        // "https://tantrang-backend.onrender.com/api/category"
+        "http://localhost:3001/api/category"
+      );
       setCategories(res.data);
     } catch (error) {
       console.error("Fetching categories error:", error);
@@ -63,7 +73,9 @@ export default function AdminNewsPage() {
         formData.append("file", file);
 
         const uploadRes = await axios.post(
+          // "https://tantrang-backend.onrender.com/api/news/upload",
           "http://localhost:3001/api/news/upload",
+
           formData
         );
 
@@ -86,10 +98,18 @@ export default function AdminNewsPage() {
 
       if (editingId !== null) {
         //Update existing news
-        await axios.put(`http://localhost:3001/api/news/${editingId}`, payload);
+        await axios.put(
+          // `https://tantrang-backend.onrender.com/api/news/${editingId}`,
+          `http://localhost:3001/api/news/${editingId}`,
+          payload
+        );
       } else {
         // Add news
-        await axios.post("http://localhost:3001/api/news", payload);
+        await axios.post(
+          // "https://tantrang-backend.onrender.com/api/news",
+          "http://localhost:3001/api/news",
+          payload
+        );
       }
       setTitle("");
       setSlug("");
@@ -98,18 +118,62 @@ export default function AdminNewsPage() {
       setCategoryId(null);
       setIsFeatured(false);
       setEditingId(null);
+      setCurrentThumbnailUrl(undefined);
       fetchNews();
     } catch (error) {
       console.error("Failed to save news:", error);
     }
   }
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: number, thumbnailUrl?: string) {
+    // Xác nhận từ người dùng trước khi xóa
+    if (!window.confirm("Bạn có chắc chắn muốn xóa tin tức này không?")) return;
     try {
-      await axios.delete(`http://localhost:3001/api/news/${id}`);
+      // 1. Gửi yêu cầu xóa tin tức từ database
+      await axios.delete(
+        // `https://tantrang-backend.onrender.com/api/news/${id}`
+        `http://localhost:3001/api/news/${id}`
+      );
+
+      // 2. Nếu có hình, gửi yêu cầu xóa hình ảnh từ server
+      if (thumbnailUrl) {
+        try {
+          // GỬi đường dẫn tương đối của ảnh để backend xóa
+          const deleteImageRes = await axios.delete(
+            // "https://tantrang-backend.onrender.com/api/news/delete-image",
+            "http://localhost:3001/api/news/delete-image",
+            {
+              data: {
+                imageUrl: thumbnailUrl, // Đây là nơi backend sẽ extract filename từ URL này
+              },
+            }
+          );
+          console.log("Image delete response:", deleteImageRes.data.message);
+        } catch (imageDeleteError: any) {
+          console.error("Failed to delete image on server: ", imageDeleteError);
+
+          // Xử lý các loại bug khác nhau từ backend
+          if (imageDeleteError.response?.status === 404) {
+            console.warn(
+              "Image file not found on server, but news was deleted successfully"
+            );
+          } else if (imageDeleteError.response?.status === 403) {
+            console.error("Access denied when deleting image");
+            alert("Không có quyền xóa ảnh, nhưng tin tức đã bị xóa");
+          } else {
+            alert("Xóa ảnh không thành công, nhưng tin tức đã bị xóa");
+          }
+          // Bạn có thể hiển thị thông báo lỗi cho người dùng
+          // Vì tin tức chính đã bị xóa khỏi Database
+          // alert("Xóa ảnh không thành công, nhưng tin tức đã bị xóa");
+        }
+      }
+
       fetchNews();
-    } catch (error) {
+      alert("Tin tức đã được xóa thành công!");
+    } catch (error: any) {
       console.error("Failed to delete news:", error);
+      alert("Xóa tin tức thất bại. Vui lòng thử lại!");
     }
   }
 
@@ -120,6 +184,40 @@ export default function AdminNewsPage() {
     setCategoryId(item.categoryId);
     setIsFeatured(!!item.isFeatured);
     setEditingId(item.id);
+  }
+
+  async function handleDeleteCurrentThumbnail() {
+    if (!currentThumbnailUrl) return;
+
+    if (!window.confirm("Bạn có chắc chắn muốn xóa hình ảnh hiện tại không?")) {
+      return;
+    }
+
+    try {
+      const deleteImageRes = await axios.delete(
+        `http://localhost:3001/api/news/delete-image`,
+        {
+          data: {
+            imageUrl: currentThumbnailUrl,
+          },
+        }
+      );
+      console.log("Current thumbnail deleted:", deleteImageRes.data.message);
+      // Cập nhật state news để loại bỏ thumbnail khỏi item đang chỉnh sửa
+      setNews((prevNews) =>
+        prevNews.map((n) =>
+          n.id === editingId ? { ...n, thumbnail: undefined } : n
+        )
+      );
+      setCurrentThumbnailUrl(undefined); // Xóa URL thumbnail hiện tại khỏi state
+      setFile(null);
+      alert("Ảnh hiện tại đã được xóa khỏi Database");
+    } catch (err: any) {
+      console.error("Lỗi khi xóa ảnh hiện tại:", err);
+      alert(
+        ` Lỗi khi xóa ảnh hiện tại: ${err.response?.data?.error || err.message}`
+      );
+    }
   }
 
   return (
@@ -181,11 +279,12 @@ export default function AdminNewsPage() {
                   onChange={(e) => {
                     if (e.target.files?.[0]) {
                       setFile(e.target.files[0]);
+                      setCurrentThumbnailUrl(undefined); // Xóa URL thumbnail hiện tại khi chọn file mới
                     }
                   }}
                 />
               </label>
-
+              {/* Hiển thị preview của file mới chọn */}
               {file && (
                 <Image
                   src={URL.createObjectURL(file)}
@@ -193,7 +292,28 @@ export default function AdminNewsPage() {
                   className="object-cover rounded border"
                   width={160}
                   height={160}
+                  priority // Tải sớm ảnh preview
                 />
+              )}
+
+              {/* Hiển thị hình ảnh hiện tại khi chỉnh sửa và chưa chọn file mới */}
+              {editingId && !file && currentThumbnailUrl && (
+                <div className="relative">
+                  <Image
+                    src={currentThumbnailUrl}
+                    alt="Preview"
+                    className="object-cover rounded border"
+                    width={160}
+                    height={160}
+                  />
+                  <button
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold cursor-pointer"
+                    onClick={handleDeleteCurrentThumbnail}
+                    title="Xóa hình ảnh hiện tại"
+                  >
+                    X
+                  </button>
+                </div>
               )}
             </div>
             <div className="flex gap-4">
@@ -227,7 +347,8 @@ export default function AdminNewsPage() {
               >
                 {item.thumbnail && (
                   <img
-                    src={`http://localhost:3001${item.thumbnail}`}
+                    // src={`https://tantrang-backend.onrender.com${item.thumbnail}`}
+                    src={item.thumbnail}
                     alt="Thumbnail"
                     className="w-40 h-28 object-cover"
                   />
@@ -258,7 +379,7 @@ export default function AdminNewsPage() {
                   </button> */}
                   <button
                     className="bg-[#ff2525] text-white h-[100%] w-20 rounded cursor-pointer hover:opacity-70"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => handleDelete(item.id, item.thumbnail)}
                   >
                     Delete
                   </button>

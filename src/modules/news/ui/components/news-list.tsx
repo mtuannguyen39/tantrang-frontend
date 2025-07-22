@@ -26,12 +26,18 @@ export default function NewsList() {
   const itemsPerPage = 10;
 
   const fetchNews = async () => {
-    const res = await axios.get("http://localhost:3001/api/news");
+    const res = await axios.get(
+      // "https://tantrang-backend.onrender.com/api/news"
+      "http://localhost:3001/api/news"
+    );
     setNews(res.data);
   };
 
   const fetchCategories = async () => {
-    const res = await axios.get("http://localhost:3001/api/category");
+    const res = await axios.get(
+      // "https://tantrang-backend.onrender.com/api/category"
+      "http://localhost:3001/api/category"
+    );
     setCategories(res.data);
   };
 
@@ -55,8 +61,8 @@ export default function NewsList() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-2 justify-center">
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2 justify-center mt-6">
         <Button
           onClick={() => setSelectedCategory(null)}
           className={`px-4 py-2 border rounded full ${
@@ -81,13 +87,14 @@ export default function NewsList() {
           </Button>
         ))}
       </div>
-      <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-8 mt-6">
         {currentPage === 1 && featured && (
           <NewsCard
             key={featured.id}
             id={featured.id}
             title={featured.title}
-            thumbnail={`http://localhost:3001${featured.thumbnail}`}
+            // thumbnail={featured.thumbnail}
+            thumbnail={featured.thumbnail}
             isFeatured
             className="col-span-2 row-span-2"
           />
@@ -97,13 +104,13 @@ export default function NewsList() {
             key={item.id}
             id={item.id}
             title={item.title}
-            thumbnail={`http://localhost:3001${item.thumbnail}`}
-            className=""
+            // thumbnail={item.thumbnail}
+            thumbnail={item.thumbnail}
           />
         ))}
       </div>
-
-      <div className="flex justify-center mt-4 gap-2">
+      {/* Phân trang */}
+      {/* <div className="flex justify-center mt-4 gap-2">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <Button
             key={page}
@@ -117,7 +124,7 @@ export default function NewsList() {
             {page}
           </Button>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

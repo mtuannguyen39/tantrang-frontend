@@ -4,9 +4,7 @@ import React from "react";
 const Page = () => {
   return (
     <div>
-      <div>
-        <NewsList />
-      </div>
+      <NewsList />
     </div>
   );
 };
