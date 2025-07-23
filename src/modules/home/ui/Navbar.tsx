@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
+  const pathname = usePathname();
   return (
     <div>
       <header className="bg-[#7b1fa2] text-white text-center py-4">
@@ -14,8 +18,25 @@ const Navbar = () => {
           <p>Giáo xứ Tân Trang</p>
         </Link>
         <div className="flex gap-4 text-lg font-semibold">
-          <Link href="#" className="rounded-full border py-2 px-4">
-            Trang chủ
+          <Link
+            href="/news"
+            className={`rounded-full border py-2 cursor-pointer px-4 ${
+              pathname === "/news"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700"
+            }`}
+          >
+            Tin tức chung
+          </Link>
+          <Link
+            href="/tntt"
+            className={`rounded-full border py-2 cursor-pointer px-4 ${
+              pathname === "/tntt"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700"
+            }`}
+          >
+            Thiếu Nhi Thánh Thể
           </Link>
           <Link href="#" className="rounded-full border py-2 px-4">
             Giới thiệu
