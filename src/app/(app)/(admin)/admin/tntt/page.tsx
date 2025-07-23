@@ -31,6 +31,9 @@ export default function AdminTnttPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [isFeatured, setIsFeatured] = useState<boolean>(false);
+  const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
+    string | undefined
+  >(undefined);
 
   async function fetchTntt() {
     try {
@@ -40,7 +43,8 @@ export default function AdminTnttPage() {
       );
       setTntt(res.data);
     } catch (err) {
-      throw new Error("Failed to fetch TNTT list:");
+      console.log("Lỗi khi tải danh sách tin tức TNTT", err);
+      alert("Không thể tải danh sách tin tức TNTT. Vui lòng thử lại!!!");
     }
   }
 
@@ -113,6 +117,7 @@ export default function AdminTnttPage() {
       setCategoryId(null);
       setIsFeatured(false);
       setEditingId(null);
+      setCurrentThumbnailUrl(undefined);
       fetchTntt();
     } catch (err) {
       console.error("Failed to save tntt:", err);
@@ -179,6 +184,40 @@ export default function AdminTnttPage() {
     setEditingId(item.id);
   }
 
+  async function handleDeleteCurrentThumbnail() {
+    if (!currentThumbnailUrl) return;
+
+    if (!window.confirm("Bạn có chắc chắn muốn xóa hình ảnh hiện tại không?")) {
+      return;
+    }
+
+    try {
+      const deleteImageRes = await axios.delete(
+        `http://localhost:3001/api/tntt/delete-image`,
+        {
+          data: {
+            imageUrl: currentThumbnailUrl,
+          },
+        }
+      );
+      console.log("Current thumbnail deleted:", deleteImageRes.data.message);
+      // Cập nhật state news để loại bỏ thumbnail khỏi item đang chỉnh sửa
+      setTntt((prevNews) =>
+        prevNews.map((n) =>
+          n.id === editingId ? { ...n, thumbnail: undefined } : n
+        )
+      );
+      setCurrentThumbnailUrl(undefined); // Xóa URL thumbnail hiện tại khỏi state
+      setFile(null);
+      alert("Ảnh hiện tại đã được xóa khỏi Database");
+    } catch (err: any) {
+      console.error("Lỗi khi xóa ảnh hiện tại:", err);
+      alert(
+        ` Lỗi khi xóa ảnh hiện tại: ${err.response?.data?.error || err.message}`
+      );
+    }
+  }
+
   return (
     <div className="flex min-h-screen bg-[#f9f9f9]">
       <main className="flex-1 p-6">
@@ -237,11 +276,13 @@ export default function AdminTnttPage() {
                   onChange={(e) => {
                     if (e.target.files?.[0]) {
                       setFile(e.target.files[0]);
+                      setCurrentThumbnailUrl(undefined);
                     }
                   }}
                 />
               </label>
 
+              {/* Hiển thị preview của file mới chọn */}
               {file && (
                 <Image
                   src={URL.createObjectURL(file)}
@@ -249,7 +290,27 @@ export default function AdminTnttPage() {
                   className="object-cover rounded border"
                   width={160}
                   height={160}
+                  priority
                 />
+              )}
+              {/* Hiển thị hình ảnh hiện tại khi chỉnh sửa và chưa chọn file mới */}
+              {editingId && !file && currentThumbnailUrl && (
+                <div className="relative">
+                  <Image
+                    src={currentThumbnailUrl}
+                    alt="Preview"
+                    className="object-cover rounded border"
+                    width={160}
+                    height={160}
+                  />
+                  <button
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold cursor-pointer"
+                    onClick={handleDeleteCurrentThumbnail}
+                    title="Xóa hình ảnh hiện tại"
+                  >
+                    X
+                  </button>
+                </div>
               )}
             </div>
             <div className="flex gap-4">
