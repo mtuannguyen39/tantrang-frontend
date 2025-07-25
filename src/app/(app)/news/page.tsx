@@ -8,7 +8,7 @@ export default function NewsPage() {
   return (
     <div>
       <Navbar />
-      <div className="p-4">
+      <div className="p-4 container mx-auto">
         <h2 className="text-2xl font-bold mb-4">Tin tức chung</h2>
         <NewsList />
       </div>

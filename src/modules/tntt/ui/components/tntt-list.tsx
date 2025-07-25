@@ -66,11 +66,11 @@ export default function TnttList() {
 
   return (
     <div className="space-y-4">
-      <CategoryFilters
+      {/* <CategoryFilters
         categories={categories}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
-      />
+      /> */}
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-8 mt-6">
         {currentPage === 1 && featured && (
           <TnttCard

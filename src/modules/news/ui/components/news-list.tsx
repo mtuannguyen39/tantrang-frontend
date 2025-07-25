@@ -62,31 +62,6 @@ export default function NewsList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2 justify-center mt-6">
-        <Button
-          onClick={() => setSelectedCategory(null)}
-          className={`px-4 py-2 border rounded full ${
-            selectedCategory === null
-              ? "bg-blue-600 text-white"
-              : "bg-white text-gray-700"
-          }`}
-        >
-          Tất cả
-        </Button>
-        {categories.map((cat) => (
-          <Button
-            key={cat.id}
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`px-4 py-2 border rounded full ${
-              selectedCategory === cat.id
-                ? "bg-blue-600 text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            {cat.name}
-          </Button>
-        ))}
-      </div>
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-8 mt-6">
         {currentPage === 1 && featured && (
           <NewsCard
