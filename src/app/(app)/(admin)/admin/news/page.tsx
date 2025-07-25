@@ -21,6 +21,14 @@ interface Category {
   name: string;
 }
 
+interface YearItem {
+  id: number;
+  title: string;
+  name: string;
+  code: string;
+  year: number;
+}
+
 export default function AdminNewsPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -34,6 +42,8 @@ export default function AdminNewsPage() {
   const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
     string | undefined
   >(undefined);
+  const [yearId, setYearId] = useState<number | null>(null);
+  const [yearName, setYearName] = useState<YearItem[]>([]);
 
   async function fetchNews() {
     try {
@@ -60,9 +70,22 @@ export default function AdminNewsPage() {
     }
   }
 
+  async function fetchYear() {
+    try {
+      const res = await axios.get(
+        // "https://tantrang-backend.onrender.com/api/category"
+        "http://localhost:3001/api/year"
+      );
+      setYearName(res.data);
+    } catch (error) {
+      console.error("Fetching Liturgical Year error:", error);
+    }
+  }
+
   useEffect(() => {
     fetchNews();
     fetchCategories();
+    fetchYear();
   }, []);
 
   async function handleAddOrUpdate() {
@@ -267,6 +290,20 @@ export default function AdminNewsPage() {
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
+                </option>
+              ))}
+            </select>
+            <select
+              className="border p-2 rounded"
+              value={yearId ?? ""}
+              onChange={(e) => setYearId(Number(e.target.value))}
+            >
+              <option value="" disabled>
+                Chọn năm phụng vụ
+              </option>
+              {yearName.map((y) => (
+                <option key={y.id} value={y.id}>
+                  {y.name} - {y.code} - {y.year}
                 </option>
               ))}
             </select>
