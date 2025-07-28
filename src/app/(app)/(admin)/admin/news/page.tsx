@@ -14,6 +14,7 @@ interface NewsItem {
   categoryId: number;
   isFeatured?: boolean;
   createdAt: string;
+  yearId: number;
 }
 
 interface Category {
@@ -21,7 +22,7 @@ interface Category {
   name: string;
 }
 
-interface YearItem {
+interface LiturgicalYear {
   id: number;
   title: string;
   name: string;
@@ -42,8 +43,8 @@ export default function AdminNewsPage() {
   const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
     string | undefined
   >(undefined);
+  const [yearName, setYearName] = useState<LiturgicalYear[]>([]);
   const [yearId, setYearId] = useState<number | null>(null);
-  const [yearName, setYearName] = useState<YearItem[]>([]);
 
   async function fetchNews() {
     try {
@@ -115,6 +116,7 @@ export default function AdminNewsPage() {
         slug,
         content,
         thumbnail: thumbnailUrl || undefined,
+        yearId,
         categoryId,
         isFeatured,
       };
@@ -142,6 +144,7 @@ export default function AdminNewsPage() {
       setIsFeatured(false);
       setEditingId(null);
       setCurrentThumbnailUrl(undefined);
+      setYearId(null);
       fetchNews();
     } catch (error) {
       console.error("Failed to save news:", error);
@@ -207,6 +210,7 @@ export default function AdminNewsPage() {
     setCategoryId(item.categoryId);
     setIsFeatured(!!item.isFeatured);
     setEditingId(item.id);
+    setYearId(item.yearId);
   }
 
   async function handleDeleteCurrentThumbnail() {
@@ -270,7 +274,6 @@ export default function AdminNewsPage() {
               placeholder="Slug"
               onChange={(e) => setSlug(e.target.value)}
               className="border rounded p-2"
-              required
             />
             <textarea
               rows={3}
@@ -356,6 +359,7 @@ export default function AdminNewsPage() {
             <div className="flex gap-4">
               <input
                 type="checkbox"
+                disabled
                 checked={isFeatured}
                 onChange={(e) => setIsFeatured(e.target.checked)}
               />
@@ -397,7 +401,7 @@ export default function AdminNewsPage() {
                       Mô tả: {item.content}
                     </p>
                     <span className="text-xs text-gray-400 mt-1">
-                      Slug: {item.slug}
+                      Năm Phụng Vụ: {item.yearId}
                     </span>
                     {item.isFeatured && (
                       <span className="pl-6 text-xs text-red-500 font-bold">

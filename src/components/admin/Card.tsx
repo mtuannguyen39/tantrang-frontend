@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Users, FileText, BarChart2 } from "lucide-react";
+import { Calendar, Users, FileText } from "lucide-react";
 
 async function getDashboardStats() {
   const res = await fetch(
@@ -20,50 +20,60 @@ const AdminCard = async () => {
   const stats = await getDashboardStats();
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-semibold mb-6">Welcome back User</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <main className="flex-1 p-4 md:p-6">
+        <h1 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">
+          Welcome back User
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <Card className="bg-gradient-to-r from-[#FF2CDF] to-[#0014FF] text-white">
-            <CardContent className="p-5">
+            <CardContent className="p-4 md:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm">Today's Appointments</p>
-                  <h2 className="text-2xl font-bold">120</h2>
+                  <p className="text-xs md:text-sm">Năm phụng vụ</p>
+                  <h2 className="text-lg md:text-2xl font-bold">
+                    {stats.liturgicalYearCount}
+                  </h2>
                 </div>
-                <Calendar size={32} />
+                <Calendar size={24} className="md:w-8 md:h-8" />
               </div>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#00ff5b] to-[#0014ff] text-white">
-            <CardContent className="p-5">
+            <CardContent className="p-4 md:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm">All news</p>
-                  <h2 className="text-2xl font-bold">{stats.newsCount}</h2>
+                  <p className="text-xs md:text-sm">All news</p>
+                  <h2 className="text-lg md:text-2xl font-bold">
+                    {stats.newsCount}
+                  </h2>
                 </div>
-                <FileText size={32} />
+                <FileText size={24} className="md:w-8 md:h-8" />
               </div>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#ffe53b] to-[#ff2525] text-white">
-            <CardContent className="p-5">
+            <CardContent className="p-4 md:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm">TNTT News</p>
-                  <h2 className="text-2xl font-bold">{stats.tnttCount}</h2>
+                  <p className="text-xs md:text-sm">TNTT News</p>
+                  <h2 className="text-lg md:text-2xl font-bold">
+                    {stats.tnttCount}
+                  </h2>
                 </div>
-                <Users size={32} />
+                <Users size={24} className="md:w-8 md:h-8" />
               </div>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-r from-[#ffe53b] to-[#00FFFF] text-white">
-            <CardContent className="p-5">
+            <CardContent className="p-4 md:p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm">Bible Readings</p>
-                  <h2 className="text-2xl font-bold">{stats.bibleCount}</h2>
+                  <p className="text-xs md:text-sm">Bible Readings</p>
+                  <h2 className="text-lg md:text-2xl font-bold">
+                    {stats.bibleCount}
+                  </h2>
                 </div>
-                <Calendar size={32} />
+                <Calendar size={24} className="md:w-8 md:h-8" />
               </div>
             </CardContent>
           </Card>
