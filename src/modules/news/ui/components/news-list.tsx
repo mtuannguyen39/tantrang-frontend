@@ -23,7 +23,7 @@ export default function NewsList({ liturgicalYearId }: NewsListProps) {
 
   const fetchNews = async () => {
     const url = liturgicalYearId
-      ? `http://localhost:3001/api/news?litugicalYearId=${liturgicalYearId}`
+      ? `http://localhost:3001/api/news?liturgicalYearId=${liturgicalYearId}`
       : "http://localhost:3001/api/news";
 
     const res = await axios.get(
