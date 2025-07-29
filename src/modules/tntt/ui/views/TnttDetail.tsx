@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { getNewsDetail, getNewsList } from "@/modules/news/server/procedures";
 import Link from "next/link";
 import { FaFacebook, FaYoutube } from "react-icons/fa";
 import { getTnttDetail, getTnttList } from "@/modules/tntt/server/procedures";
@@ -41,8 +40,9 @@ export default function TnttDetail() {
 
   if (!tntt) return <p className="text-center text-gray-500">Đang tải...</p>;
   return (
-    <div className="bg-gray-100 flex justify-center gap-2 pt-2 pb-2">
-      <div className="flex flex-col fixed gap-3 left-[20%] mt-2 drop-shadow-2xl">
+    <div className="bg-gray-100 flex flex-col items-center min-h-screen pt-2 pb-2 px-2">
+      {/* Sidebar mạng xã hội - chỉ hiện trên md trở lên */}
+      <div className="hidden md:flex flex-col fixed gap-3 left-8 top-32 drop-shadow-2xl z-10">
         <Link href="https://www.facebook.com/profile.php?id=100068910341526">
           <div className="bg-white p-4 rounded-2xl">
             <FaFacebook className="h-8 w-8 text-blue-600" />
@@ -55,30 +55,34 @@ export default function TnttDetail() {
         </Link>
       </div>
       {/* Chi tiết tin tức TNTT */}
-      <div className="min-w-3xl px-4 py-8 bg-white rounded-md">
-        <h1 className="text-3xl font-bold mb-4 text-gray-900">{tntt.title}</h1>
+      <div className="w-full max-w-3xl px-2 sm:px-4 py-6 bg-white rounded-md shadow-md mt-2 mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-900 text-center break-words">
+          {tntt.title}
+        </h1>
         {tntt.thumbnail && (
           <Image
             src={tntt.thumbnail}
             alt={tntt.title}
             width={800}
             height={400}
-            className="rounded-lg mb-6 w-full object-cover"
+            className="rounded-lg mb-6 w-full object-cover max-h-72 sm:max-h-96"
           />
         )}
-        <div className="text-gray-900 font-medium leading-relaxed whitespace-pre-line text-wrap text-justify">
+        <div className="text-gray-900 font-medium leading-relaxed whitespace-pre-line text-wrap text-justify text-base sm:text-lg">
           {tntt.description}
         </div>
         {/* Tin tức TNTT khác */}
         <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Tin tức TNTT khác</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            Tin tức TNTT khác
+          </h2>
           {relatedTntt.length > 0 ? (
-            <ul className="space-y-4 grid grid-cols-4 gap-4">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {relatedTntt.map((item) => (
                 <li key={item.id} className="flex gap-4">
                   <Link
                     href={`/tntt/${item.id}`}
-                    className="flex flex-col gap-4 overflow-hidden"
+                    className="flex flex-col gap-2 overflow-hidden"
                   >
                     {item.thumbnail && (
                       <Image
@@ -89,7 +93,7 @@ export default function TnttDetail() {
                         className="rounded-lg object-cover"
                       />
                     )}
-                    <p className="flex flex-1 justify-center overflow-hidden text-ellipsis whitespace-nowrap items-center text-gray-900 font-medium hover:underline">
+                    <p className="flex-1 justify-center overflow-hidden text-ellipsis whitespace-nowrap items-center text-gray-900 font-medium hover:underline text-sm">
                       {item.title}
                     </p>
                   </Link>
