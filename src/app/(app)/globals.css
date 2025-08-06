@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -124,4 +125,10 @@
 
 @theme {
   --color-zantora-blue: oklch(73.49% 0.191 254.36);
+}
+
+.prose sup,
+sup {
+  vertical-align: super;
+  font-size: 0.75em; /* hoặc smaller */
 }
