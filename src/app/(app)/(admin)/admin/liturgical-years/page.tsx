@@ -2,8 +2,6 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Image from "next/image";
 import {
   getAllYear,
   getAllCategories,
@@ -118,22 +116,22 @@ export default function AdminYearPage() {
     setCurrentThumbnailUrl(item.imageUrl);
   }
 
-  async function handleDeleteCurrentImageFromUI() {
-    if (!currentThumbnailUrl) return;
+  // async function handleDeleteCurrentImageFromUI() {
+  //   if (!currentThumbnailUrl) return;
 
-    try {
-      await deleteCurrentImage(currentThumbnailUrl);
-      setLiturYear((prevYears) =>
-        prevYears.map((y) =>
-          y.id === editingId ? { ...y, imageUrl: undefined } : y
-        )
-      );
-      setCurrentThumbnailUrl(undefined);
-      setFile(null);
-    } catch (error: any) {
-      alert(error.message);
-    }
-  }
+  //   try {
+  //     await deleteCurrentImage(currentThumbnailUrl);
+  //     setLiturYear((prevYears) =>
+  //       prevYears.map((y) =>
+  //         y.id === editingId ? { ...y, imageUrl: undefined } : y
+  //       )
+  //     );
+  //     setCurrentThumbnailUrl(undefined);
+  //     setFile(null);
+  //   } catch (error: any) {
+  //     alert(error.message);
+  //   }
+  // }
 
   return (
     <div className="flex min-h-screen bg-[#f9f9ff]">
@@ -240,7 +238,7 @@ export default function AdminYearPage() {
                   <button
                     className="bg-[#ff2525] text-white h-[100%] w-20 rounded cursor-pointer hover:opacity-70"
                     onClick={(e) => {
-                      // e.stopPropagation();
+                      e.stopPropagation();
                       deleteYear(item.id);
                     }}
                   >

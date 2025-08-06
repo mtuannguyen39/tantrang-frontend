@@ -57,7 +57,9 @@ const Navbar = () => {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 text-gray-700 hover:text-blue-600 transition-colors"
         >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {isMobileMenuOpen ?
+            <X size={24} />
+          : <Menu size={24} />}
         </button>
         {/* Mobile Search */}
         <div className="relative flex-1 max-w-xs mx-4">
@@ -110,7 +112,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                href="/bible-reading"
+                href="/bible-readings"
                 className="block px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -133,7 +135,7 @@ const Navbar = () => {
               </button>
               {isMobileDropdownOpen && (
                 <ul className="bg-gray-50">
-                  {liturgicalYears.length > 0 ? (
+                  {liturgicalYears.length > 0 ?
                     liturgicalYears.map((y) => (
                       <li key={y.id}>
                         <Link
@@ -145,11 +147,10 @@ const Navbar = () => {
                         </Link>
                       </li>
                     ))
-                  ) : (
-                    <li className="px-8 py-2 text-gray-400 italic">
+                  : <li className="px-8 py-2 text-gray-400 italic">
                       Đang tải...
                     </li>
-                  )}
+                  }
                 </ul>
               )}
             </li>
@@ -203,7 +204,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link
-              href="/bible-reading"
+              href="/bible-readings"
               className="hover:text-blue-600 transition-colors duration-200"
             >
               <p>Kinh thánh</p>
@@ -226,8 +227,8 @@ const Navbar = () => {
                 />
               </button>
               {isDropdownOpen && (
-                <ul className="absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
-                  {liturgicalYears.length > 0 ? (
+                <ul className="absolute left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                  {liturgicalYears.length > 0 ?
                     liturgicalYears.map((y) => (
                       <li key={y.id}>
                         <Link
@@ -239,11 +240,10 @@ const Navbar = () => {
                         </Link>
                       </li>
                     ))
-                  ) : (
-                    <li className="px-4 py-2 text-gray-400 italic">
+                  : <li className="px-4 py-2 text-gray-400 italic">
                       Đang tải...
                     </li>
-                  )}
+                  }
                 </ul>
               )}
             </div>
