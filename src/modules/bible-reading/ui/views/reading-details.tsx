@@ -120,10 +120,7 @@ export default function ReadingDetails() {
           <h2 className="text-xl font-bold mb-4">Bài đọc khác</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {relatedReadings.map((reading) => (
-              <Link
-                href={`/bible-readings/${reading.id}`}
-                className="flex flex-col gap-2 overflow-hidden"
-              >
+              <div className="flex flex-col gap-2 overflow-hidden">
                 <ReadingCard
                   key={reading.id}
                   id={reading.id}
@@ -131,7 +128,7 @@ export default function ReadingDetails() {
                   thumbnail={reading.thumbnail ?? ""}
                   scripture={reading.scripture}
                 />
-              </Link>
+              </div>
             ))}
           </div>
         </div>
