@@ -27,6 +27,18 @@ const Navbar = () => {
       .then((res) => setLiturgicalYears(res.data));
   }, []);
 
+  // Nhóm dữ liệu theo năm
+  const groupedYears = liturgicalYears.reduce(
+    (acc, year) => {
+      if (!acc[year.name]) {
+        acc[year.name] = [];
+      }
+      acc[year.name].push(year);
+      return acc;
+    },
+    {} as Record<string, LiturgicalYearProps[]>
+  );
+
   // Đóng dropdown khi click ra ngoài (desktop)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -135,22 +147,28 @@ const Navbar = () => {
               </button>
               {isMobileDropdownOpen && (
                 <ul className="bg-gray-50">
-                  {liturgicalYears.length > 0 ?
-                    liturgicalYears.map((y) => (
-                      <li key={y.id}>
-                        <Link
-                          href={`/liturgical-years/${y.id}`}
-                          className="block px-8 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {y.name} - {y.code}
-                        </Link>
-                      </li>
-                    ))
-                  : <li className="px-8 py-2 text-gray-400 italic">
-                      Đang tải...
+                  {Object.entries(groupedYears).map(([yearName, seasons]) => (
+                    <li key={yearName}>
+                      <details>
+                        <summary className="px-8 py-2 cursor-pointer hover:bg-blue-50">
+                          {yearName}
+                        </summary>
+                        <ul>
+                          {seasons.map((season) => (
+                            <li key={season.id}>
+                              <Link
+                                href={`/liturgical-years/${season.id}`}
+                                className="block px-12 py-2 text-sm hover:bg-blue-50 hover:text-blue-600"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                              >
+                                {season.code}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
                     </li>
-                  }
+                  ))}
                 </ul>
               )}
             </li>
@@ -228,22 +246,28 @@ const Navbar = () => {
               </button>
               {isDropdownOpen && (
                 <ul className="absolute left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
-                  {liturgicalYears.length > 0 ?
-                    liturgicalYears.map((y) => (
-                      <li key={y.id}>
-                        <Link
-                          href={`/liturgical-years/${y.id}`}
-                          className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
-                          onClick={() => setIsDropdownOpen(false)}
-                        >
-                          {y.name} - {y.code}
-                        </Link>
-                      </li>
-                    ))
-                  : <li className="px-4 py-2 text-gray-400 italic">
-                      Đang tải...
+                  {Object.entries(groupedYears).map(([yearName, seasons]) => (
+                    <li key={yearName} className="relative group">
+                      <div className="flex items-center justify-between px-4 py-2 hover:bg-blue-50 cursor-pointer">
+                        {yearName}
+                        <span>▶</span>
+                      </div>
+                      {/* Submenu */}
+                      <ul className="absolute top-0 left-full ml-1 bg-white border rounded-lg shadow-lg py-1 w-56 hidden group-hover:block">
+                        {seasons.map((season) => (
+                          <li key={season.id}>
+                            <Link
+                              href={`/liturgical-years/${season.id}`}
+                              className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-600"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              {season.code}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     </li>
-                  }
+                  ))}
                 </ul>
               )}
             </div>
