@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/spinner";
+import { usePathname } from "next/navigation";
 
 export function Search() {
   const router = useRouter();
@@ -15,21 +16,21 @@ export function Search() {
   const debouncedValue = useDebounce(value, 500);
 
   useEffect(() => {
-    const updateSearchParams = async () => {
-      setIsLoading(true);
-      try {
-        const params = new URLSearchParams(searchParams);
-        if (debouncedValue) {
-          params.set("q", debouncedValue);
-        } else {
-          params.delete("q");
-        }
-        await router.push(`?${params.toString()}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    updateSearchParams();
+    const params = new URLSearchParams(searchParams.toString());
+    if (debouncedValue) {
+      params.set("q", debouncedValue);
+    } else {
+      params.delete("q");
+    }
+    const next = `${params.toString()}`;
+    const current = `?${searchParams.toString()}`;
+    if (next === current) return;
+    setIsLoading(true);
+    try {
+      router.replace(next);
+    } finally {
+      setIsLoading(false);
+    }
   }, [debouncedValue, router, searchParams]);
 
   return (

@@ -62,25 +62,12 @@ export default function ReadingDetails() {
         const data = await getReadingDetail(id);
         setReadings(data);
 
-        if (
-          data &&
-          data.reading1 &&
-          data.reading2 &&
-          data.psalm &&
-          data.alleluia &&
-          data.gospel
-        ) {
-          // Chờ cho Promise giải quyết và gán kết quả
-          const htmlDataReading1 = await markdownToHtml(data.reading1);
-          const htmlDataReading2 = await markdownToHtml(data.reading2);
-          const htmlDataPsalm = await markdownToHtml(data.psalm);
-          const htmlDataAlleluia = await markdownToHtml(data.alleluia);
-          const htmlDataGospel = await markdownToHtml(data.gospel);
-          setHtmlReading1(htmlDataReading1);
-          setHtmlReading2(htmlDataReading2);
-          setHtmlPsalm(htmlDataPsalm);
-          setHtmlAlleluia(htmlDataAlleluia);
-          setHtmlGospel(htmlDataGospel);
+        if (data) {
+          if (data.reading1) setHtmlReading1(markdownToHtml(data.reading1));
+          if (data.reading2) setHtmlReading2(markdownToHtml(data.reading2));
+          if (data.psalm) setHtmlPsalm(markdownToHtml(data.psalm));
+          if (data.alleluia) setHtmlAlleluia(markdownToHtml(data.alleluia));
+          if (data.gospel) setHtmlGospel(markdownToHtml(data.gospel));
         }
 
         // Lấy danh sách bài đọc khác

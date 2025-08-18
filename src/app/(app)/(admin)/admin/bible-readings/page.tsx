@@ -186,7 +186,7 @@ export default function AdminReadingPage() {
 
       setTitle("");
       setReading1("");
-      setReading1("");
+      setReading2("");
       setPsalm("");
       setAlleluia("");
       setGospel("");

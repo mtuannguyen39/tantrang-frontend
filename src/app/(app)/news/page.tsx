@@ -9,9 +9,9 @@ import React, { Suspense } from "react";
 export default async function NewsPage({
   searchParams,
 }: {
-  searchParams: { q: string };
+  searchParams?: { q?: string };
 }) {
-  const query = searchParams.q;
+  const normalizedQuery = searchParams?.q?.trim().toLowerCase() ?? "";
   const news = await getAllNews();
   return (
     <div className="container mx-auto">
@@ -25,7 +25,7 @@ export default async function NewsPage({
         <NewsResult query={searchParams.q} />
       </Suspense> */}
       <Navbar />
-      <NewsList news={news} />
+      <NewsList query={normalizedQuery} />
       {/*<div className="p-4 container mx-auto">
         <h2 className="text-2xl font-bold mb-4">Tin tức chung</h2>
         <NewsList />
