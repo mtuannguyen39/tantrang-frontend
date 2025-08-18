@@ -1,8 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useEffect, useRef } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  SearchIcon,
+  Home,
+  Newspaper,
+  Users,
+  Book,
+  Calendar,
+  Info,
+  Phone,
+} from "lucide-react";
 import axios from "axios";
 import { Search } from "@/components/search-params";
 
@@ -28,7 +40,6 @@ const Navbar = () => {
       .then((res) => setLiturgicalYears(res.data));
   }, []);
 
-  // Nhóm dữ liệu theo năm
   const groupedYears = liturgicalYears.reduce(
     (acc, year) => {
       if (!acc[year.name]) {
@@ -40,7 +51,6 @@ const Navbar = () => {
     {} as Record<string, LiturgicalYearProps[]>
   );
 
-  // Đóng dropdown khi click ra ngoài (desktop)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -59,242 +69,279 @@ const Navbar = () => {
   }, [isDropdownOpen]);
 
   return (
-    <div>
-      <header className="bg-[#7b1fa2] text-white text-center py-4 px-4">
-        <h1 className="text-lg md:text-xl font-bold">GIÁO XỨ TÂN TRANG</h1>
-        <p className="text-sm">Giáo phận Sài Gòn</p>
-      </header>
-      {/* Mobile Menu Button */}
-      <div className="md:hidden flex justify-between items-center px-4 py-2 bg-white border-b">
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 text-gray-700 hover:text-blue-600 transition-colors"
-        >
-          {isMobileMenuOpen ?
-            <X size={24} />
-          : <Menu size={24} />}
-        </button>
-        {/* Mobile Search */}
-        <div className="relative flex-1 max-w-xs mx-4">
-          <input
-            type="text"
-            placeholder="Tìm kiếm...."
-            className="w-full pl-8 pr-4 py-2 rounded-full border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-          />
-          <svg
-            className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
-            width="16"
-            height="16"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.313 0 6 2.687 6 6s-2.687 6-6 6-6-2.687-6-6 2.687-6 6-6z" />
-          </svg>
+    <div className="top-0 z-50 backdrop-blur-md bg-white/80 shadow-lg border-b border-white/20">
+      <header className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm"></div>
+        <div className="container mx-auto px-4 py-8 relative z-10">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent tracking-wide mb-2">
+              GIÁO XỨ TÂN TRANG
+            </h1>
+            <p className="text-blue-100/90 text-sm md:text-base font-medium tracking-wider">
+              Giáo phận Sài Gòn
+            </p>
+          </div>
         </div>
-      </div>
-      {/* Mobile Navigation Menu */}
-      {isMobileMenuOpen && (
-        <nav className="md:hidden bg-white border-b border-gray-200">
-          <ul className="flex flex-col space-y-0 text-gray-700 font-semibold">
-            <li>
+      </header>
+
+      <nav className="bg-white/90 backdrop-blur-md border-b border-gray-200/50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-18">
+            <div className="hidden lg:flex items-center space-x-1">
               <Link
                 href="/"
-                className="block px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300 font-medium group"
               >
-                Trang chủ
+                <Home
+                  size={18}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span>Trang chủ</span>
               </Link>
-            </li>
-            <li>
               <Link
                 href="/news"
-                className="block px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300 font-medium group"
               >
-                Tin tức chung
+                <Newspaper
+                  size={18}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span>Tin tức</span>
               </Link>
-            </li>
-            <li>
               <Link
                 href="/tntt"
-                className="block px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300 font-medium group"
               >
-                Thiếu nhi Thánh Thể
+                <Users
+                  size={18}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span>TNTT</span>
               </Link>
-            </li>
-            <li>
               <Link
                 href="/bible-readings"
-                className="block px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300 font-medium group"
               >
-                Kinh thánh
-              </Link>
-            </li>
-            {/* Accordion cho Năm phụng vụ trên mobile */}
-            <li>
-              <button
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200 focus:outline-none"
-                onClick={() => setIsMobileDropdownOpen((v) => !v)}
-              >
-                Năm phụng vụ{" "}
-                <ChevronDown
-                  className={`ml-2 transition-transform ${
-                    isMobileDropdownOpen ? "rotate-180" : ""
-                  }`}
+                <Book
                   size={18}
+                  className="group-hover:scale-110 transition-transform duration-300"
                 />
-              </button>
-              {isMobileDropdownOpen && (
-                <ul className="bg-gray-50">
-                  {Object.entries(groupedYears).map(([yearName, seasons]) => (
-                    <li key={yearName}>
-                      <details>
-                        <summary className="px-8 py-2 cursor-pointer hover:bg-blue-50">
-                          {yearName}
-                        </summary>
-                        <ul>
-                          {seasons.map((season) => (
-                            <li key={season.id}>
-                              <Link
-                                href={`/liturgical-years/${season.id}`}
-                                className="block px-12 py-2 text-sm hover:bg-blue-50 hover:text-blue-600"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                              >
-                                {season.code}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </details>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-            <li>
+                <span>Kinh thánh</span>
+              </Link>
+
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300 font-medium focus:outline-none group"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <Calendar
+                    size={18}
+                    className="group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <span>Năm phụng vụ</span>
+                  <ChevronDown
+                    className={`transition-all duration-300 group-hover:scale-110 ${isDropdownOpen ? "rotate-180" : ""}`}
+                    size={16}
+                  />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-3 w-80 bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                    <div className="py-2">
+                      {Object.entries(groupedYears).map(
+                        ([yearName, seasons]) => (
+                          <div key={yearName} className="group">
+                            <div className="px-6 py-3 text-sm font-semibold text-gray-900 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border-b border-gray-100/50">
+                              {yearName}
+                            </div>
+                            <div className="py-1">
+                              {seasons.map((season) => (
+                                <Link
+                                  key={season.id}
+                                  href={`/liturgical-years/${season.id}`}
+                                  className="block px-6 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 hover:translate-x-1"
+                                  onClick={() => setIsDropdownOpen(false)}
+                                >
+                                  {season.code}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <Link
                 href="/gioi-thieu"
-                className="block px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300 font-medium group"
               >
-                Giới Thiệu
+                <Info
+                  size={18}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span>Giới thiệu</span>
               </Link>
-            </li>
-            <li>
               <Link
                 href="/lien-he"
-                className="block px-4 py-3 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-200"
+                className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300 font-medium group"
+              >
+                <Phone
+                  size={18}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span>Liên hệ</span>
+              </Link>
+            </div>
+
+            <div className="hidden lg:block flex-1 max-w-md ml-8">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl blur-sm"></div>
+                <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg">
+                  <Search />
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:hidden flex items-center space-x-4 w-full">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition-all duration-300"
+              >
+                {isMobileMenuOpen ?
+                  <X size={24} />
+                : <Menu size={24} />}
+              </button>
+
+              <div className="flex-1 max-w-sm">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl blur-sm"></div>
+                  <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg">
+                    <Search />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {isMobileMenuOpen && (
+          <div className="lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50">
+            <div className="py-4 space-y-1">
+              <Link
+                href="/"
+                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Liên hệ
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      )}
-      {/* Desktop Navigation */}
-      <nav className="hidden md:flex flex-grow justify-center mx-4">
-        <ul className="flex space-x-6 text-gray-700 font-semibold p-2 items-center">
-          <li>
-            <Link
-              href="/"
-              className="hover:text-blue-600 transition-colors duration-200"
-            >
-              <p>Trang chủ</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/news"
-              className="hover:text-blue-600 transition-colors duration-200"
-            >
-              <p>Tin tức chung</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/tntt"
-              className="hover:text-blue-600 transition-colors duration-200"
-            >
-              <p>Thiếu nhi Thánh Thể</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/bible-readings"
-              className="hover:text-blue-600 transition-colors duration-200"
-            >
-              <p>Kinh thánh</p>
-            </Link>
-          </li>
-          {/* Dropdown Năm phụng vụ trên desktop */}
-          <li className="relative">
-            <div ref={dropdownRef}>
-              <button
-                className="flex items-center gap-1 hover:text-blue-600 transition-colors duration-200 focus:outline-none"
-                onClick={() => setIsDropdownOpen((v) => !v)}
-                onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
-              >
-                <span>Năm phụng vụ</span>
-                <ChevronDown
-                  className={`transition-transform ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
-                  size={18}
+                <Home
+                  size={20}
+                  className="group-hover:scale-110 transition-transform duration-300"
                 />
-              </button>
-              {isDropdownOpen && (
-                <ul className="absolute left-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
-                  {Object.entries(groupedYears).map(([yearName, seasons]) => (
-                    <li key={yearName} className="relative group">
-                      <div className="flex items-center justify-between px-4 py-2 hover:bg-blue-50 cursor-pointer">
-                        {yearName}
-                        <span>▶</span>
-                      </div>
-                      {/* Submenu */}
-                      <ul className="absolute top-0 left-full ml-1 bg-white border rounded-lg shadow-lg py-1 w-56 hidden group-hover:block">
+                <span className="font-medium">Trang chủ</span>
+              </Link>
+              <Link
+                href="/news"
+                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Newspaper
+                  size={20}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span className="font-medium">Tin tức</span>
+              </Link>
+              <Link
+                href="/tntt"
+                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Users
+                  size={20}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span className="font-medium">Thiếu nhi Thánh Thể</span>
+              </Link>
+              <Link
+                href="/bible-readings"
+                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Book
+                  size={20}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span className="font-medium">Kinh thánh</span>
+              </Link>
+
+              <div>
+                <button
+                  className="w-full flex items-center justify-between mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 focus:outline-none group"
+                  onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <Calendar
+                      size={20}
+                      className="group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <span className="font-medium">Năm phụng vụ</span>
+                  </div>
+                  <ChevronDown
+                    className={`transition-all duration-300 group-hover:scale-110 ${isMobileDropdownOpen ? "rotate-180" : ""}`}
+                    size={18}
+                  />
+                </button>
+
+                {isMobileDropdownOpen && (
+                  <div className="mx-4 mt-2 bg-gray-50/80 backdrop-blur-sm rounded-xl overflow-hidden">
+                    {Object.entries(groupedYears).map(([yearName, seasons]) => (
+                      <div key={yearName}>
+                        <div className="px-8 py-3 text-sm font-semibold text-gray-900 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border-b border-gray-100/50">
+                          {yearName}
+                        </div>
                         {seasons.map((season) => (
-                          <li key={season.id}>
-                            <Link
-                              href={`/liturgical-years/${season.id}`}
-                              className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-600"
-                              onClick={() => setIsDropdownOpen(false)}
-                            >
-                              {season.code}
-                            </Link>
-                          </li>
+                          <Link
+                            key={season.id}
+                            href={`/liturgical-years/${season.id}`}
+                            className="block px-12 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 hover:translate-x-1"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {season.code}
+                          </Link>
                         ))}
-                      </ul>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <Link
+                href="/gioi-thieu"
+                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Info
+                  size={20}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span className="font-medium">Giới thiệu</span>
+              </Link>
+              <Link
+                href="/lien-he"
+                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Phone
+                  size={20}
+                  className="group-hover:scale-110 transition-transform duration-300"
+                />
+                <span className="font-medium">Liên hệ</span>
+              </Link>
             </div>
-          </li>
-          <li>
-            <Link
-              href="/gioi-thieu"
-              className="hover:text-blue-600 transition-colors duration-200"
-            >
-              <p>Giới Thiệu</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/lien-he"
-              className="hover:text-blue-600 transition-colors duration-200"
-            >
-              <p>Liên hệ</p>
-            </Link>
-          </li>
-        </ul>
+          </div>
+        )}
       </nav>
-      {/* Desktop Search */}
-      <div className="hidden md:flex justify-between items-center px-4 py-2 bg-white border-b">
-        <Search />
-      </div>
     </div>
   );
 };
