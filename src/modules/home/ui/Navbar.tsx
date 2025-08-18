@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import axios from "axios";
+import { Search } from "@/components/search-params";
 
 interface LiturgicalYearProps {
   id: number;
@@ -291,21 +292,8 @@ const Navbar = () => {
         </ul>
       </nav>
       {/* Desktop Search */}
-      <div className="hidden md:block relative max-w-md mx-auto mt-4">
-        <input
-          type="text"
-          placeholder="Tìm kiếm...."
-          className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-        />
-        <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          width="20"
-          height="20"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.313 0 6 2.687 6 6s-2.687 6-6 6-6-2.687-6-6 2.687-6 6-6z" />
-        </svg>
+      <div className="hidden md:flex justify-between items-center px-4 py-2 bg-white border-b">
+        <Search />
       </div>
     </div>
   );

@@ -4,11 +4,12 @@ import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
+import RichText from "@/components/RichText";
 
 interface NewsItem {
   id: number;
   title: string;
-  slug: string;
+  slug?: string;
   content: string;
   thumbnail?: string;
   categoryId: number;
@@ -114,7 +115,7 @@ export default function AdminNewsPage() {
       const payload = {
         title,
         slug,
-        content,
+        content: content,
         thumbnail: thumbnailUrl || undefined,
         yearId,
         categoryId,
@@ -205,7 +206,7 @@ export default function AdminNewsPage() {
 
   function startEdit(item: NewsItem) {
     setTitle(item.title);
-    setSlug(item.slug);
+    setSlug(item.slug || "");
     setContent(item.content);
     setCategoryId(item.categoryId);
     setIsFeatured(!!item.isFeatured);
@@ -275,12 +276,14 @@ export default function AdminNewsPage() {
               onChange={(e) => setSlug(e.target.value)}
               className="border rounded p-2"
             />
-            <textarea
-              rows={3}
+            <p className="text-base text-gray-800 font-bold">
+              Nội dung của tin tức (Mô tả)
+            </p>
+            <RichText
               value={content}
+              onChange={setContent}
               placeholder="Mô tả"
-              onChange={(e) => setContent(e.target.value)}
-              className="border rounded p-2"
+              className="min-h-[150px]"
             />
             <select
               className="border p-2 rounded"

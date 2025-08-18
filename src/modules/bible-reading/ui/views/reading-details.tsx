@@ -16,7 +16,11 @@ import ReadingCard from "@/modules/bible-reading/ui/components/reading-card";
 interface ReadingProps {
   id: number;
   title: string;
-  description?: string;
+  reading1?: string;
+  reading2?: string;
+  psalm?: string;
+  alleluia?: string;
+  gospel: string;
   scripture: string;
   thumbnail?: string;
 }
@@ -43,7 +47,11 @@ export default function ReadingDetails() {
   const id = Number(params?.id);
   const [readings, setReadings] = useState<ReadingProps | null>(null);
   const [relatedReadings, setRelatedReadings] = useState<ReadingProps[]>([]);
-  const [htmlDescription, setHtmlDescription] = useState<string>("");
+  const [htmlReading1, setHtmlReading1] = useState<string>("");
+  const [htmlReading2, setHtmlReading2] = useState<string>("");
+  const [htmlPsalm, setHtmlPsalm] = useState<string>("");
+  const [htmlAlleluia, setHtmlAlleluia] = useState<string>("");
+  const [htmlGospel, setHtmlGospel] = useState<string>("");
 
   useEffect(() => {
     if (!id) return;
@@ -54,10 +62,12 @@ export default function ReadingDetails() {
         const data = await getReadingDetail(id);
         setReadings(data);
 
-        if (data && data.description) {
-          // Chờ cho Promise giải quyết và gán kết quả
-          const html = await markdownToHtml(data.description);
-          setHtmlDescription(html);
+        if (data) {
+          if (data.reading1) setHtmlReading1(markdownToHtml(data.reading1));
+          if (data.reading2) setHtmlReading2(markdownToHtml(data.reading2));
+          if (data.psalm) setHtmlPsalm(markdownToHtml(data.psalm));
+          if (data.alleluia) setHtmlAlleluia(markdownToHtml(data.alleluia));
+          if (data.gospel) setHtmlGospel(markdownToHtml(data.gospel));
         }
 
         // Lấy danh sách bài đọc khác
@@ -109,12 +119,46 @@ export default function ReadingDetails() {
         <div
           className="text-gray-900 font-medium leading-relaxed  max-w-none text-wrap text-justify text-base sm:text-lg"
           dangerouslySetInnerHTML={{
-            __html:
-              htmlDescription ||
-              readings.description ||
-              "No description available.",
+            __html: htmlReading1 || readings.reading1 || "Không có bài đọc 1",
           }}
         />
+        <br />
+        <div
+          className="text-gray-900 font-medium leading-relaxed  max-w-none text-wrap text-justify text-base sm:text-lg"
+          dangerouslySetInnerHTML={{
+            __html: htmlPsalm || readings.psalm || "Không có Đáp ca",
+          }}
+        />
+        <br />
+
+        <div
+          className="text-gray-900 font-medium leading-relaxed  max-w-none text-wrap text-justify text-base sm:text-lg"
+          dangerouslySetInnerHTML={{
+            __html: htmlReading2 || readings.reading2 || "Không có bài đọc 2",
+          }}
+        />
+        <br />
+
+        <div
+          className="text-gray-900 font-medium leading-relaxed  max-w-none text-wrap text-justify text-base sm:text-lg"
+          dangerouslySetInnerHTML={{
+            __html:
+              htmlAlleluia || readings.alleluia || "Không có nội dung alleluia",
+          }}
+        />
+        <h4 className="text-[24px] text-center uppercase font-bold text-gray-900 border-t-2 border-gray-200 mt-4 border-b-2 mb-4">
+          tin mừng hôm nay
+        </h4>
+        <div
+          className="text-gray-900 font-medium leading-relaxed  max-w-none text-wrap text-justify text-base sm:text-lg"
+          dangerouslySetInnerHTML={{
+            __html:
+              htmlGospel ||
+              readings.gospel ||
+              "Không có nội dung đoạn Tin Mừng",
+          }}
+        />
+
         {/* Bài đọc khác */}
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Bài đọc khác</h2>

@@ -16,14 +16,17 @@ interface NewsItem {
 
 interface NewsListProps {
   liturgicalYearId?: number;
+  query?: string;
 }
 
 export default function NewsList({ liturgicalYearId }: NewsListProps) {
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [query, setQuery] = useState("");
 
   const fetchNews = async () => {
-    const url = liturgicalYearId
-      ? `http://localhost:3001/api/news?liturgicalYearId=${liturgicalYearId}`
+    const url =
+      liturgicalYearId ?
+        `http://localhost:3001/api/news?liturgicalYearId=${liturgicalYearId}`
       : "http://localhost:3001/api/news";
 
     const res = await axios.get(
@@ -37,7 +40,10 @@ export default function NewsList({ liturgicalYearId }: NewsListProps) {
     fetchNews();
   }, [liturgicalYearId]);
 
-  const filteredNews = news;
+  const filteredNews =
+    query ?
+      news.filter((item) => item.title.toLowerCase().includes(query))
+    : news;
   const featured = filteredNews.find((n) => n.isFeatured);
   const others = filteredNews.filter((n) => !n.isFeatured);
 

@@ -5,8 +5,8 @@ interface YearItem {
   name: string;
   code: string;
   year: number;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   imageUrl?: string;
   categoryId: number;
   isFeatured?: boolean;

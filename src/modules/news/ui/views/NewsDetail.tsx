@@ -3,39 +3,65 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { getNewsDetail, getNewsList } from "@/modules/news/server/procedures";
+import {
+  getAllNews,
+  getNewsDetail,
+  getNewsList,
+} from "@/modules/news/server/procedures";
 import Link from "next/link";
 import { FaFacebook, FaYoutube } from "react-icons/fa";
 
-interface NewsItem {
+interface NewsProps {
   id: number;
   title: string;
-  content: string;
+  content?: string;
   thumbnail?: string;
-  createdAt: string;
+}
+
+function markdownToHtml(markdown: string): string {
+  return markdown
+    .replace(/\^(.*?)\^/g, "<sup>$1</sup>") // Đặt lên đầu
+    .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+    .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+    .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+    .replace(/__(.*?)__/g, "<u>$1</u>")
+    .replace(/\n/g, "<br>");
 }
 
 export default function NewsDetail() {
   const params = useParams();
   const id = Number(params?.id);
-  const [news, setNews] = useState<NewsItem | null>(null);
-  const [relatedNews, setRelatedNews] = useState<NewsItem[]>([]);
+  const [news, setNews] = useState<NewsProps | null>(null);
+  const [htmlContent, setHtmlContent] = useState<string>("");
+  const [relatedNews, setRelatedNews] = useState<NewsProps[]>([]);
 
   useEffect(() => {
-    if (id) {
-      getNewsDetail(id).then((data) => {
-        if (data) setNews(data);
-      });
-      // Lấy danh sách tin tức khác
-      getNewsList().then((data) => {
-        if (data) {
-          const filteredNews = data
-            .filter((item: NewsItem) => item.id !== id)
+    if (!id) return;
+
+    (async () => {
+      try {
+        const data = await getNewsDetail(id);
+        setNews(data);
+
+        if (data && data.content) {
+          const htmlDataContent = await markdownToHtml(data.content);
+          setHtmlContent(htmlDataContent);
+        }
+
+        // Lấy danh sách bài đọc
+        const allNews = await getAllNews();
+        if (allNews) {
+          const filteredNews = allNews
+            .filter((item: NewsProps) => item.id !== id)
             .slice(0, 4);
           setRelatedNews(filteredNews);
         }
-      });
-    }
+      } catch (error) {
+        console.error("Failed to fetch news detail:", error);
+      }
+    })();
   }, [id]);
 
   if (!news) return <p className="text-center text-gray-500">Đang tải....</p>;
@@ -64,19 +90,22 @@ export default function NewsDetail() {
             src={news.thumbnail}
             alt={news.title}
             width={800}
-            height={400}
+            height={600}
             className="rounded-lg mb-6 w-full object-cover max-h-72 sm:max-h-96"
           />
         )}
-        <div className="text-gray-900 font-medium leading-relaxed whitespace-pre-line text-wrap text-justify text-base sm:text-lg">
-          {news.content}
-        </div>
+        <div
+          className="text-gray-900 font-medium leading-relaxed max-w-none text-wrap text-justify text-base sm:text-lg"
+          dangerouslySetInnerHTML={{
+            __html: htmlContent || news.content || "Không có nội dung",
+          }}
+        />
         {/* Tin tức khác */}
         <div className="mt-8">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
             Tin tức khác
           </h2>
-          {relatedNews.length > 0 ? (
+          {relatedNews.length > 0 ?
             <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {relatedNews.map((item) => (
                 <li key={item.id} className="flex gap-4">
@@ -100,9 +129,7 @@ export default function NewsDetail() {
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="text-gray-500">Không có tin tức khác</p>
-          )}
+          : <p className="text-gray-500">Không có tin tức khác</p>}
         </div>
       </div>
     </div>
