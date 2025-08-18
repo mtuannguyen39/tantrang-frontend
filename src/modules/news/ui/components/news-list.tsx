@@ -16,14 +16,16 @@ interface NewsItem {
 
 interface NewsListProps {
   liturgicalYearId?: number;
+  news: any;
 }
 
 export default function NewsList({ liturgicalYearId }: NewsListProps) {
   const [news, setNews] = useState<NewsItem[]>([]);
 
   const fetchNews = async () => {
-    const url = liturgicalYearId
-      ? `http://localhost:3001/api/news?liturgicalYearId=${liturgicalYearId}`
+    const url =
+      liturgicalYearId ?
+        `http://localhost:3001/api/news?liturgicalYearId=${liturgicalYearId}`
       : "http://localhost:3001/api/news";
 
     const res = await axios.get(

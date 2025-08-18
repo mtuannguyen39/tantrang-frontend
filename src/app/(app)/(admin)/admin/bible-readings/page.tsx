@@ -19,7 +19,11 @@ interface BibleReading {
   title: string;
   slug: string;
   scripture: string;
-  description: string;
+  reading1?: string;
+  reading2?: string;
+  psalm?: string;
+  alleluia?: string;
+  gospel: string;
   thumbnail?: string;
   liturgicalYearId: number;
   categoryId: number;
@@ -106,7 +110,11 @@ export default function AdminReadingPage() {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [scripture, setScripture] = useState("");
-  const [description, setDescription] = useState("");
+  const [reading1, setReading1] = useState("");
+  const [reading2, setReading2] = useState("");
+  const [psalm, setPsalm] = useState("");
+  const [alleluia, setAlleluia] = useState("");
+  const [gospel, setGospel] = useState("");
   const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
     string | undefined
   >(undefined);
@@ -157,12 +165,16 @@ export default function AdminReadingPage() {
       }
 
       // Convert markdown description thành HTML trước khi lưu
-      const htmlDescription = markdownToHtml(description);
+      // const htmlDescription = markdownToHtml(description); Hiện tại chưa cần
       // const plainDescription = markdownToText(description);
 
       const payload: Omit<BibleReading, "id"> = {
         title,
-        description: description,
+        reading1: reading1,
+        reading2: reading2,
+        psalm: psalm,
+        alleluia: alleluia,
+        gospel: gospel,
         slug,
         scripture,
         thumbnail: currentThumbnailUrl,
@@ -173,7 +185,11 @@ export default function AdminReadingPage() {
       await saveReading(payload, file, editingId);
 
       setTitle("");
-      setDescription("");
+      setReading1("");
+      setReading1("");
+      setPsalm("");
+      setAlleluia("");
+      setGospel("");
       setSlug("");
       setScripture("");
       setFile(null);
@@ -190,7 +206,12 @@ export default function AdminReadingPage() {
   function startEdit(item: BibleReading) {
     setTitle(item.title);
     setSlug(item.slug);
-    setDescription(item.description);
+    setReading1(item.reading1 || "");
+    setReading2(item.reading2 || "");
+    setPsalm(item.psalm || "");
+    setAlleluia(item.alleluia || "");
+    setGospel(item.gospel);
+    setLiturgicalYearId(item.liturgicalYearId);
     setScripture(item.scripture);
     setFile(null);
     setCategoryId(item.categoryId);
@@ -258,13 +279,51 @@ export default function AdminReadingPage() {
               onChange={(e) => setSlug(e.target.value)}
               className="border rounded p-2"
             />
-
+            {/* Bài đọc 1 */}
+            <p className="text-gray-800 font-bold text-base">
+              Nội dung bài đọc 1
+            </p>
             <RichText
-              value={description}
-              onChange={setDescription}
+              value={reading1}
+              onChange={setReading1}
               placeholder="Nội dung Kinh Thánh"
               className="min-h-[150px]"
             />
+            {/* Đáp ca */}
+            <p className="text-gray-800 font-bold text-base">Nội dung đáp ca</p>
+            <RichText
+              value={psalm}
+              onChange={setPsalm}
+              className="min-h-[150px]"
+            />
+            {/* Bài đọc 2 */}
+            <p className="text-gray-800 font-bold text-base">
+              Nội dung bài đọc 2
+            </p>
+            <RichText
+              value={reading2}
+              onChange={setReading2}
+              className="min-h-[150px]"
+            />
+            {/* Alleluia */}
+            <p className="text-gray-800 font-bold text-base">
+              Nội dung Alleluia
+            </p>
+            <RichText
+              value={alleluia}
+              onChange={setAlleluia}
+              className="min-h-[150px]"
+            />
+            {/* Tin Mừng */}
+            <p className="text-gray-800 font-bold text-base">
+              Nội dung đoạn Tin Mừng
+            </p>
+            <RichText
+              value={gospel}
+              onChange={setGospel}
+              className="min-h-[150px]"
+            />
+
             <input
               type="text"
               value={scripture}
@@ -381,9 +440,12 @@ export default function AdminReadingPage() {
               <div className="flex-1 p-4 flex flex-col justify-between">
                 <div>
                   <h3 className="text-lg font-medium">{reading.title}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-1 w-196">
-                    Mô tả: {reading.description}
-                  </p>
+                  {/* <p className="text-sm text-gray-600 line-clamp-1 w-196">
+                    Bài đọc 1: {reading.reading1 || "Không có bài đọc 1"} <br />
+                    Đáp ca: {reading.psalm || "Không có đáp ca"} <br />
+                    Alleluia: {reading.alleluia || "Không có Alleluia"} <br />
+                    Bài đọc 2: {reading.reading2 || "Không có bài đọc 2"} <br />
+                  </p> */}
                   <span className="text-xs text-gray-400 mt-1">
                     Năm Phụng Vụ: {reading.liturgicalYearId} - Danh mục:{" "}
                     {reading.categoryId}
