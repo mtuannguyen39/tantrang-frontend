@@ -6,7 +6,6 @@ import {
   Menu,
   X,
   ChevronDown,
-  SearchIcon,
   Home,
   Newspaper,
   Users,
@@ -69,7 +68,7 @@ const Navbar = () => {
   }, [isDropdownOpen]);
 
   return (
-    <div className="top-0 z-50 backdrop-blur-md bg-white/80 shadow-lg border-b border-white/20">
+    <div className="top-0 z-[100] backdrop-blur-md bg-white/80 shadow-lg border-b border-white/20">
       <header className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm"></div>
         <div className="container mx-auto px-4 py-8 relative z-10">
@@ -146,26 +145,24 @@ const Navbar = () => {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-3 w-80 bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                  <div className="absolute top-full left-0 mt-3 w-64 bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-2xl shadow-2xl z-[200] overflow-hidden">
                     <div className="py-2">
                       {Object.entries(groupedYears).map(
                         ([yearName, seasons]) => (
-                          <div key={yearName} className="group">
-                            <div className="px-6 py-3 text-sm font-semibold text-gray-900 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border-b border-gray-100/50">
+                          <div key={yearName}>
+                            <div className="px-4 py-2 text-xs font-semibold text-gray-500 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border-b border-gray-100/50">
                               {yearName}
                             </div>
-                            <div className="py-1">
-                              {seasons.map((season) => (
-                                <Link
-                                  key={season.id}
-                                  href={`/liturgical-years/${season.id}`}
-                                  className="block px-6 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 hover:translate-x-1"
-                                  onClick={() => setIsDropdownOpen(false)}
-                                >
-                                  {season.code}
-                                </Link>
-                              ))}
-                            </div>
+                            {seasons.map((season) => (
+                              <Link
+                                key={season.id}
+                                href={`/liturgical-years/${season.id}`}
+                                className="block px-6 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 hover:translate-x-1"
+                                onClick={() => setIsDropdownOpen(false)}
+                              >
+                                {season.code}
+                              </Link>
+                            ))}
                           </div>
                         )
                       )}
@@ -232,7 +229,7 @@ const Navbar = () => {
             <div className="py-4 space-y-1">
               <Link
                 href="/"
-                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                className="flex items-center space-x-3  px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Home
@@ -243,7 +240,7 @@ const Navbar = () => {
               </Link>
               <Link
                 href="/news"
-                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                className="flex items-center space-x-3  px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Newspaper
@@ -254,7 +251,7 @@ const Navbar = () => {
               </Link>
               <Link
                 href="/tntt"
-                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                className="flex items-center space-x-3  px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Users
@@ -265,7 +262,7 @@ const Navbar = () => {
               </Link>
               <Link
                 href="/bible-readings"
-                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                className="flex items-center space-x-3  px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Book
@@ -277,7 +274,7 @@ const Navbar = () => {
 
               <div>
                 <button
-                  className="w-full flex items-center justify-between mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 focus:outline-none group"
+                  className="w-full flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 focus:outline-none"
                   onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
                 >
                   <div className="flex items-center space-x-3">
@@ -294,7 +291,7 @@ const Navbar = () => {
                 </button>
 
                 {isMobileDropdownOpen && (
-                  <div className="mx-4 mt-2 bg-gray-50/80 backdrop-blur-sm rounded-xl overflow-hidden">
+                  <div className=" mt-2 bg-gray-50/80 backdrop-blur-sm rounded-xl overflow-hidden">
                     {Object.entries(groupedYears).map(([yearName, seasons]) => (
                       <div key={yearName}>
                         <div className="px-8 py-3 text-sm font-semibold text-gray-900 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border-b border-gray-100/50">
@@ -318,7 +315,7 @@ const Navbar = () => {
 
               <Link
                 href="/gioi-thieu"
-                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                className="flex items-center space-x-3  px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Info
@@ -329,7 +326,7 @@ const Navbar = () => {
               </Link>
               <Link
                 href="/lien-he"
-                className="flex items-center space-x-3 mx-4 px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
+                className="flex items-center space-x-3  px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 rounded-xl transition-all duration-300 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Phone

@@ -59,6 +59,21 @@ export default function ReadingList({ liturgicalYearId }: ReadingListProps) {
       )
     : readings;
 
+  const displayReadings = filteredReadings.slice(0, 12);
+  const totalCount = displayReadings.length;
+
+  // Calculate grid columns based on total count
+  const getGridCols = (count: number) => {
+    if (count <= 1) return "grid-cols-1";
+    if (count <= 2) return "grid-cols-1 sm:grid-cols-2";
+    if (count <= 3) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+    if (count <= 4)
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+    if (count <= 6)
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6";
+    return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6";
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -104,18 +119,8 @@ export default function ReadingList({ liturgicalYearId }: ReadingListProps) {
           </h3>
           <p className="text-gray-500">Thử tìm kiếm với từ khóa khác</p>
         </div>
-      : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 mt-8">
-          {/* {filteredReadings.map((reading) => (
-          <ReadingCard
-            key={reading.id}
-            id={reading.id}
-            title={reading.title}
-            scripture={reading.scripture}
-            thumbnail={reading.thumbnail || ""}
-            // description={reading.description}
-          />
-        ))} */}
-          {readings.map((item) => (
+      : <div className={`grid ${getGridCols(totalCount)} gap-4 mb-8 mt-8`}>
+          {displayReadings.map((item) => (
             <ReadingCard
               key={item.id}
               id={item.id}

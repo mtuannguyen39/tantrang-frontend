@@ -61,6 +61,22 @@ export default function NewsList({ liturgicalYearId }: NewsListProps) {
   const featured = filteredNews.find((n) => n.isFeatured);
   const others = filteredNews.filter((n) => !n.isFeatured);
 
+  const displayedOthers = others.slice(0, 12);
+  const totalItems = (featured ? 1 : 0) + displayedOthers.length;
+
+  // Dynamic grid classes based on total items
+  const getGridCols = () => {
+    if (totalItems <= 1) return "grid-cols-1";
+    if (totalItems <= 2) return "grid-cols-1 sm:grid-cols-2";
+    if (totalItems <= 4) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2";
+    if (totalItems <= 6) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+    if (totalItems <= 8)
+      return "grid-cols-1 sm:grid-cols-2 sm:grid-cols-3 xl:grid-cols-4";
+    if (totalItems <= 10)
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5";
+    return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6";
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -106,7 +122,7 @@ export default function NewsList({ liturgicalYearId }: NewsListProps) {
           </h3>
           <p className="text-gray-500">Thử tìm kiếm với từ khóa khác</p>
         </div>
-      : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 mt-6">
+      : <div className={`grid ${getGridCols()} gap-4 mb-8 mt-6`}>
           {featured && (
             <NewsCard
               key={featured.id}
@@ -118,7 +134,7 @@ export default function NewsList({ liturgicalYearId }: NewsListProps) {
               className="col-span-1 sm:col-span-2 lg:col-span-2 xl:col-span-2 row-span-1 sm:row-span-2"
             />
           )}
-          {others.slice(0, 4).map((item) => (
+          {displayedOthers.map((item) => (
             <NewsCard
               key={item.id}
               id={item.id}
