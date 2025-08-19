@@ -160,21 +160,51 @@ export default function ReadingDetails() {
         />
 
         {/* Bài đọc khác */}
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">Bài đọc khác</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {relatedReadings.map((reading) => (
-              <div className="flex flex-col gap-2 overflow-hidden">
-                <ReadingCard
-                  key={reading.id}
-                  id={reading.id}
-                  title={reading.title}
-                  thumbnail={reading.thumbnail ?? ""}
-                  scripture={reading.scripture}
-                />
-              </div>
-            ))}
-          </div>
+        <div className="mt-12 border-t pt-8">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+            <div className="w-1 h-6 bg-blue-600 rounded-full"></div>
+            Các ngày lễ khác khác
+          </h2>
+          {relatedReadings.length > 0 ?
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+              {relatedReadings.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/tntt/${item.id}`}
+                  className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
+                >
+                  <div className="relative overflow-hidden">
+                    {item.thumbnail ?
+                      <Image
+                        src={item.thumbnail || "/placeholder.svg"}
+                        alt={item.title}
+                        width={300}
+                        height={180}
+                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    : <div className="w-full h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                        <div className="text-blue-300 text-4xl">📰</div>
+                      </div>
+                    }
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                      {item.title}
+                    </h3>
+                    <div className="mt-2 flex items-center text-xs text-gray-500">
+                      <span className="inline-block w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                      Ngày lễ
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          : <div className="text-center py-12 bg-gray-50 rounded-xl">
+              <div className="text-gray-400 text-5xl mb-4">📰</div>
+              <p className="text-gray-500 font-medium">Không có tin tức khác</p>
+            </div>
+          }
         </div>
       </div>
     </div>

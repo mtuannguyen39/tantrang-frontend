@@ -130,35 +130,53 @@ export default function TnttDetail() {
             }}
           />
           {/* Tin tức TNTT khác */}
-          <div className="mt-8">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+          <div className="mt-12 border-t pt-8">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+              <div className="w-1 h-6 bg-blue-600 rounded-full"></div>
               Tin tức TNTT khác
             </h2>
             {relatedTntt.length > 0 ?
-              <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
                 {relatedTntt.map((item) => (
-                  <li key={item.id} className="flex gap-4">
-                    <Link
-                      href={`/tntt/${item.id}`}
-                      className="flex flex-col gap-2 overflow-hidden"
-                    >
-                      {item.thumbnail && (
+                  <Link
+                    key={item.id}
+                    href={`/tntt/${item.id}`}
+                    className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
+                  >
+                    <div className="relative overflow-hidden">
+                      {item.thumbnail ?
                         <Image
-                          src={item.thumbnail}
+                          src={item.thumbnail || "/placeholder.svg"}
                           alt={item.title}
-                          width={100}
-                          height={60}
-                          className="rounded-lg object-cover"
+                          width={300}
+                          height={180}
+                          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                      )}
-                      <p className="flex-1 justify-center overflow-hidden text-ellipsis whitespace-nowrap items-center text-gray-900 font-medium hover:underline text-sm">
+                      : <div className="w-full h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                          <div className="text-blue-300 text-4xl">📰</div>
+                        </div>
+                      }
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
                         {item.title}
-                      </p>
-                    </Link>
-                  </li>
+                      </h3>
+                      <div className="mt-2 flex items-center text-xs text-gray-500">
+                        <span className="inline-block w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                        Tin tức TNTT
+                      </div>
+                    </div>
+                  </Link>
                 ))}
-              </ul>
-            : <p className="text-gray-500">Không có tin tức khác</p>}
+              </div>
+            : <div className="text-center py-12 bg-gray-50 rounded-xl">
+                <div className="text-gray-400 text-5xl mb-4">📰</div>
+                <p className="text-gray-500 font-medium">
+                  Không có tin tức khác
+                </p>
+              </div>
+            }
           </div>
         </div>
       </div>
