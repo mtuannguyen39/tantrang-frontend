@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ReadingCard from "./reading-card";
+import { useSearchParams } from "next/navigation";
 
 interface ReadingProps {
   id: number;
@@ -16,37 +17,95 @@ interface ReadingProps {
 
 interface ReadingListProps {
   liturgicalYearId?: number;
+  query?: string;
 }
 
 const API_BASE_URL = "http://localhost:3001/api";
-const SERVER_URL = "https://tantrang-backend.onrender.com/api/reading";
+const API_SERVER_URL = "https://tantrang-backend.onrender.com/api/reading";
 
 export default function ReadingList({ liturgicalYearId }: ReadingListProps) {
   const [readings, setReadings] = useState<ReadingProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
 
   const fetchReadings = async () => {
-    const url =
-      liturgicalYearId ?
-        `${API_BASE_URL}/reading?liturgicalYearId=${liturgicalYearId}`
-      : `${API_BASE_URL}/reading`;
+    setLoading(true);
+    try {
+      const url =
+        liturgicalYearId ?
+          `${API_BASE_URL}/reading?liturgicalYearId=${liturgicalYearId}`
+        : `${API_BASE_URL}/reading`;
 
-    const res = await axios.get(url);
-    setReadings(res.data);
+      const res = await axios.get(url);
+      setReadings(res.data);
+    } catch (error) {
+      console.error("Lỗi khi tải thông tin ngày lễ:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchReadings();
   }, [liturgicalYearId]);
 
-  //   const filteredReadings = readings.filter(
-  //     (reading) =>
-  //       !reading.liturgicalYearId || reading.liturgicalYearId === liturgicalYearId
-  //   );
+  const filteredReadings =
+    query ?
+      readings.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query.toLowerCase()) ||
+          item.scripture.toLowerCase().includes(query.toLowerCase())
+      )
+    : readings;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải thông tin ngày lễ....</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 mt-8">
-        {/* {filteredReadings.map((reading) => (
+    <div className="space-y-6">
+      {query && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+          <p className="text-blue-800">
+            {filteredReadings.length > 0 ?
+              `Tìm thấy ${filteredReadings.length} tin tức cho "${query}"`
+            : `Không tìm thấy tin tức nào cho "${query}"`}
+          </p>
+        </div>
+      )}
+
+      {filteredReadings.length === 0 && query ?
+        <div className="text-center py-12">
+          <div className="text-gray-500 mb-4">
+            <svg
+              className="mx-auto h-12 w-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Không tìm thấy kết quả mà bạn đang tìm kiếm
+          </h3>
+          <p className="text-gray-500">Thử tìm kiếm với từ khóa khác</p>
+        </div>
+      : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8 mt-8">
+          {/* {filteredReadings.map((reading) => (
           <ReadingCard
             key={reading.id}
             id={reading.id}
@@ -56,17 +115,18 @@ export default function ReadingList({ liturgicalYearId }: ReadingListProps) {
             // description={reading.description}
           />
         ))} */}
-        {readings.map((reading) => (
-          <ReadingCard
-            key={reading.id}
-            id={reading.id}
-            title={reading.title}
-            scripture={reading.scripture}
-            thumbnail={reading.thumbnail || ""}
-            // description={reading.description}
-          />
-        ))}
-      </div>
+          {readings.map((item) => (
+            <ReadingCard
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              scripture={item.scripture}
+              thumbnail={item.thumbnail || ""}
+              // description={reading.description}
+            />
+          ))}
+        </div>
+      }
     </div>
   );
 }

@@ -3,13 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import {
-  getAllNews,
-  getNewsDetail,
-  getNewsList,
-} from "@/modules/news/server/procedures";
+import { getAllNews, getNewsDetail } from "@/modules/news/server/procedures";
 import Link from "next/link";
 import { FaFacebook, FaYoutube } from "react-icons/fa";
+import { ArrowLeft } from "lucide-react";
 
 interface NewsProps {
   id: number;
@@ -66,70 +63,116 @@ export default function NewsDetail() {
 
   if (!news) return <p className="text-center text-gray-500">Đang tải....</p>;
   return (
-    <div className="bg-gray-100 flex flex-col items-center min-h-screen pt-2 pb-2 px-2">
-      {/* Sidebar mạng xã hội - chỉ hiện trên md trở lên */}
-      <div className="hidden md:flex flex-col fixed gap-3 left-8 top-32 drop-shadow-2xl z-10">
-        <Link href="https://www.facebook.com/profile.php?id=100068910341526">
-          <div className="bg-white p-4 rounded-2xl">
-            <FaFacebook className="h-8 w-8 text-blue-600" />
-          </div>
+    <div className="bg-gray-100 flex flex-col">
+      {/* Link quay trở về */}
+      <div className="hidden md:flex flex-row ml-36 mt-8 gap-2">
+        <Link
+          href={`/`}
+          className="text-gray-500 hover:text-blue-700 hover:underline transition-colors"
+        >
+          Trang chủ
         </Link>
-        <Link href="#">
-          <div className="bg-white p-4 rounded-2xl">
-            <FaYoutube className="h-8 w-8 text-red-600" />
-          </div>
+        <div className="text-gray-500 transition-colors"> / </div>
+        <Link
+          href={`/news`}
+          className="text-gray-500 hover:text-blue-700 hover:underline transition-colors"
+        >
+          Trang tin tức chung
         </Link>
+        <div className="text-gray-500 transition-colors"> / </div>
+        <div className="text-gray-500 transition-colors">{news.title}</div>
+        {/* Nút quay trở về trang tin tức Thiếu Nhi Thánh Thể ở giao diện mobile */}
       </div>
-      {/* Chi tiết tin tức */}
-      <div className="w-full max-w-3xl px-2 sm:px-4 py-6 bg-white rounded-md shadow-md mt-2 mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-900 text-center break-words">
-          {news.title}
-        </h1>
-        {news.thumbnail && (
-          <Image
-            src={news.thumbnail}
-            alt={news.title}
-            width={800}
-            height={600}
-            className="rounded-lg mb-6 w-full object-cover max-h-72 sm:max-h-96"
+      <Link
+        href={`/news`}
+        className="md:hidden sm:block flex gap-2 underline mt-2 ml-2 text-base text-gray-500 transition-colors"
+      >
+        <ArrowLeft />
+        Quay trở về
+      </Link>
+      <div className=" flex flex-col items-center min-h-screen pt-2 pb-2 px-2">
+        {/* Sidebar mạng xã hội - chỉ hiện trên md trở lên */}
+        <div className="hidden md:flex flex-col fixed gap-3 left-8 top-32 drop-shadow-2xl z-10">
+          <Link href="https://www.facebook.com/profile.php?id=100068910341526">
+            <div className="bg-white p-4 rounded-2xl">
+              <FaFacebook className="h-8 w-8 text-blue-600" />
+            </div>
+          </Link>
+          <Link href="#">
+            <div className="bg-white p-4 rounded-2xl">
+              <FaYoutube className="h-8 w-8 text-red-600" />
+            </div>
+          </Link>
+        </div>
+        {/* Chi tiết tin tức */}
+        <div className="w-full max-w-3xl px-2 sm:px-4 py-6 bg-white rounded-md shadow-md mt-2 mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-900 text-center break-words">
+            {news.title}
+          </h1>
+          {news.thumbnail && (
+            <Image
+              src={news.thumbnail}
+              alt={news.title}
+              width={800}
+              height={600}
+              className="rounded-lg mb-6 w-full object-cover max-h-72 sm:max-h-96"
+            />
+          )}
+          <div
+            className="text-gray-900 font-medium leading-relaxed max-w-none text-wrap text-justify text-base sm:text-lg"
+            dangerouslySetInnerHTML={{
+              __html: htmlContent || news.content || "Không có nội dung",
+            }}
           />
-        )}
-        <div
-          className="text-gray-900 font-medium leading-relaxed max-w-none text-wrap text-justify text-base sm:text-lg"
-          dangerouslySetInnerHTML={{
-            __html: htmlContent || news.content || "Không có nội dung",
-          }}
-        />
-        {/* Tin tức khác */}
-        <div className="mt-8">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">
-            Tin tức khác
-          </h2>
-          {relatedNews.length > 0 ?
-            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {relatedNews.map((item) => (
-                <li key={item.id} className="flex gap-4">
+          {/* Tin tức khác */}
+          <div className="mt-12 border-t pt-8">
+            <h2 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+              <div className="w-1 h-6 bg-blue-600 rounded-full"></div>
+              Tin tức khác
+            </h2>
+            {relatedNews.length > 0 ?
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                {relatedNews.map((item) => (
                   <Link
+                    key={item.id}
                     href={`/news/${item.id}`}
-                    className="flex flex-col gap-2 overflow-hidden"
+                    className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
                   >
-                    {item.thumbnail && (
-                      <Image
-                        src={item.thumbnail}
-                        alt={item.title}
-                        width={100}
-                        height={60}
-                        className="rounded-lg object-cover"
-                      />
-                    )}
-                    <p className="flex-1 justify-center overflow-hidden text-ellipsis whitespace-nowrap items-center text-gray-900 font-medium hover:underline text-sm">
-                      {item.title}
-                    </p>
+                    <div className="relative overflow-hidden">
+                      {item.thumbnail ?
+                        <Image
+                          src={item.thumbnail || "/placeholder.svg"}
+                          alt={item.title}
+                          width={300}
+                          height={180}
+                          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      : <div className="w-full h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                          <div className="text-blue-300 text-4xl">📰</div>
+                        </div>
+                      }
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                        {item.title}
+                      </h3>
+                      <div className="mt-2 flex items-center text-xs text-gray-500">
+                        <span className="inline-block w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                        Tin tức chung
+                      </div>
+                    </div>
                   </Link>
-                </li>
-              ))}
-            </ul>
-          : <p className="text-gray-500">Không có tin tức khác</p>}
+                ))}
+              </div>
+            : <div className="text-center py-12 bg-gray-50 rounded-xl">
+                <div className="text-gray-400 text-5xl mb-4">📰</div>
+                <p className="text-gray-500 font-medium">
+                  Không có tin tức khác
+                </p>
+              </div>
+            }
+          </div>
         </div>
       </div>
     </div>

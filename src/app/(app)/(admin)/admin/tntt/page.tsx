@@ -9,7 +9,7 @@ import RichText from "@/components/RichText";
 interface TnttItems {
   id: number;
   title: string;
-  slug: string;
+  slug?: string;
   description: string;
   thumbnail?: string;
   createdAt: string;
@@ -89,7 +89,7 @@ export default function AdminTnttPage() {
       const payload = {
         title,
         slug,
-        description,
+        description: description,
         thumbnail: thumbnailUrl || undefined,
         categoryId,
         isFeatured,
@@ -178,7 +178,7 @@ export default function AdminTnttPage() {
 
   function startEdit(item: TnttItems) {
     setTitle(item.title);
-    setSlug(item.slug);
+    setSlug(item.slug || "");
     setDescription(item.description);
     setCategoryId(item.categoryId);
     setIsFeatured(!!item.isFeatured);
@@ -247,12 +247,11 @@ export default function AdminTnttPage() {
               onChange={(e) => setSlug(e.target.value)}
               className="border rounded p-2"
             />
-            <textarea
-              rows={5}
+            <RichText
               value={description}
               placeholder="Mô tả"
-              onChange={(e) => setDescription(e.target.value)}
-              className="border rounded p-2"
+              onChange={setDescription}
+              className="min-h-[150px]"
             />
             <select
               className="border p-2 rounded"
@@ -316,6 +315,7 @@ export default function AdminTnttPage() {
             </div>
             <div className="flex gap-4">
               <input
+                disabled //Tạm thời ko sử dụng được vì đang gặp lỗi ở UI
                 type="checkbox"
                 checked={isFeatured}
                 onChange={(e) => setIsFeatured(e.target.checked)}
