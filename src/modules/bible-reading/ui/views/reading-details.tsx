@@ -170,7 +170,7 @@ export default function ReadingDetails() {
               {relatedReadings.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/tntt/${item.id}`}
+                  href={`/bible-readings/${item.id}`}
                   className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
                 >
                   <div className="relative overflow-hidden">
