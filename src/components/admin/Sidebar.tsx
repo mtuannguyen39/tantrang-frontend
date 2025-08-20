@@ -62,11 +62,13 @@ export default function Sidebar({
         console.error("Error fetching admin profile:", error);
         setPermissions({
           canManageAdmins: false,
-          canManageNews: true,
-          canManageTntt: true,
-          canManageBible: true,
-          canViewStats: true,
+          canManageNews: false,
+          canManageTntt: false,
+          canManageBible: false,
+          canViewStats: false,
         });
+        // Optional: force re-auth UX
+        handleLogout();
       }
     };
 
