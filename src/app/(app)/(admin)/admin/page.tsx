@@ -4,7 +4,7 @@ import AdminCard from "@/components/admin/Card";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default async function AdminDashboard() {
+function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
@@ -24,3 +24,5 @@ export default async function AdminDashboard() {
     </div>
   );
 }
+
+export default AdminDashboard;
