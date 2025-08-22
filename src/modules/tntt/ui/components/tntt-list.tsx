@@ -82,7 +82,7 @@ export default function TnttList() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {query && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
           <p className="text-blue-800">

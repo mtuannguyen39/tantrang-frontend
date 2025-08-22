@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   X,
+  PersonStanding,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { adminAPI, type AdminUser } from "@/lib/api/admin.api";
@@ -151,16 +152,22 @@ export default function Sidebar({
       show: permissions.canManageTntt,
     },
     {
-      href: "/admin/bible",
+      href: "/admin/bible-readings",
       icon: BookOpen,
       label: "Kinh Thánh",
       show: permissions.canManageBible,
     },
     {
-      href: "/admin/liturgical",
+      href: "/admin/liturgical-years",
       icon: Calendar,
       label: "Năm phụng vụ",
       show: permissions.canManageBible,
+    },
+    {
+      href: "/admin/#",
+      icon: PersonStanding,
+      label: "Tin tức Cộng đoàn",
+      show: permissions.canManageAdmins,
     },
     {
       href: "/admin/settings",
