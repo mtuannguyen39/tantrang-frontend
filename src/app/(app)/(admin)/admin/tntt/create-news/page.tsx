@@ -34,7 +34,7 @@ export default function CreateTnttPage() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/category"
-        "http://localhost:3001/api/category"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
       );
       setCategories(res.data);
     } catch (error) {
@@ -71,7 +71,7 @@ export default function CreateTnttPage() {
         formData.append("file", file);
 
         const uploadRes = await axios.post(
-          "http://localhost:3001/api/tntt/upload",
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt/upload`,
           formData
         );
         thumbnailUrl = uploadRes.data.url;
@@ -86,7 +86,10 @@ export default function CreateTnttPage() {
         isFeatured,
       };
 
-      await axios.post("http://localhost:3001/api/tntt", payload);
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt`,
+        payload
+      );
 
       alert("Tạo tin tức thành công!");
       router.push("/admin/tntt");

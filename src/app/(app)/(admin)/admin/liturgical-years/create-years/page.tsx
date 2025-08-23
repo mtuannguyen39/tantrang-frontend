@@ -49,7 +49,7 @@ export default function CreateYearsPage() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/category"
-        "http://localhost:3001/api/category"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
       );
       setCategories(res.data);
     } catch (error) {
@@ -61,7 +61,7 @@ export default function CreateYearsPage() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/category"
-        "http://localhost:3001/api/year"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/year`
       );
       setYearName(res.data);
     } catch (error) {
@@ -99,7 +99,7 @@ export default function CreateYearsPage() {
         formData.append("file", file);
 
         const uploadRes = await axios.post(
-          "http://localhost:3001/api/news/upload",
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/upload`,
           formData
         );
         thumbnailUrl = uploadRes.data.url;
@@ -115,7 +115,10 @@ export default function CreateYearsPage() {
         isFeatured,
       };
 
-      await axios.post("http://localhost:3001/api/news", payload);
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news`,
+        payload
+      );
 
       alert("Tạo tin tức thành công!");
       router.push("/admin/news");

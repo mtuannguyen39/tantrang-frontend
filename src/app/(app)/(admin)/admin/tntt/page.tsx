@@ -41,7 +41,7 @@ export default function AdminTnttPage() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/tntt",
-        "http://localhost:3001/api/tntt"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt`
       );
       setTntt(res.data);
     } catch (err) {
@@ -54,7 +54,7 @@ export default function AdminTnttPage() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/category",
-        "http://localhost:3001/api/category"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
       );
       setCategories(res.data);
     } catch (err) {
@@ -74,7 +74,7 @@ export default function AdminTnttPage() {
       // 1. Gửi yêu cầu xóa tin tức từ database
       await axios.delete(
         // `https://tantrang-backend.onrender.com/api/tntt/${id}`
-        `http://localhost:3001/api/tntt/${id}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt/${id}`
       );
 
       // 2. Nếu có hình, gửi yêu cầu xóa hình ảnh từ server
@@ -83,7 +83,7 @@ export default function AdminTnttPage() {
           // Gửi đường dẫn tương đối của ảnh để backend xóa
           const deleteImageRes = await axios.delete(
             // "https://tantrang-backend.onrender.com/api/tntt/delete-image",
-            "http://localhost:3001/api/tntt/delete-image",
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt/delete-image`,
             {
               data: {
                 imageUrl: thumbnailUrl, // Đây là nơi backend sẽ extrach filename từ URL này

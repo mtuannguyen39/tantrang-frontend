@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
+  process.env.NEXT_PUBLIC_SERVER_URL || "https://tantrang-backend.onrender.com";
 
 console.log("[v0] API_BASE_URL configured as:", API_BASE_URL);
 console.log(

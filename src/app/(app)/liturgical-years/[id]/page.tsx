@@ -26,7 +26,7 @@ export default function LiturgicalYearDetailPage() {
     if (liturgicalYearId) {
       axios
         .get<LiturgicalYearProps>(
-          `http://localhost:3001/api/year/${liturgicalYearId}`
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/year/${liturgicalYearId}`
         )
         .then((res) => setYearDetail(res.data))
         .catch((error) =>

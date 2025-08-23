@@ -21,7 +21,7 @@ interface ReadingListProps {
 }
 
 const API_BASE_URL = "http://localhost:3001/api";
-const API_SERVER_URL = "https://tantrang-backend.onrender.com/api/reading";
+const API_SERVER_URL = "https://tantrang-backend.onrender.com/api";
 
 export default function ReadingList({ liturgicalYearId }: ReadingListProps) {
   const [readings, setReadings] = useState<ReadingProps[]>([]);
@@ -34,8 +34,8 @@ export default function ReadingList({ liturgicalYearId }: ReadingListProps) {
     try {
       const url =
         liturgicalYearId ?
-          `${API_BASE_URL}/reading?liturgicalYearId=${liturgicalYearId}`
-        : `${API_BASE_URL}/reading`;
+          `${API_SERVER_URL}/reading?liturgicalYearId=${liturgicalYearId}`
+        : `${API_SERVER_URL}/reading`;
 
       const res = await axios.get(url);
       setReadings(res.data);

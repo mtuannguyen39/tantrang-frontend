@@ -19,11 +19,11 @@ interface Category {
 }
 
 const API_BASE_URL = "http://localhost:3001/api";
-const SERVER_URL = "https://tantrang-backend.onrender.com/api";
+const API_SERVER_URL = "https://tantrang-backend.onrender.com/api";
 
 export async function getAllYear(): Promise<YearProps[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/year`);
+    const res = await axios.get(`${API_SERVER_URL}/year`);
     return res.data;
   } catch (err) {
     console.error("Lỗi khi tải tin tức năm phụng vụ: ", err);
@@ -35,7 +35,7 @@ export async function getAllYear(): Promise<YearProps[]> {
 
 export async function getAllCategories(): Promise<Category[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/category`);
+    const res = await axios.get(`${API_SERVER_URL}/category`);
     return res.data;
   } catch (err) {
     console.error("Lỗi khi tải danh mục: ", err);
@@ -54,7 +54,7 @@ export async function saveYear(
     const formData = new FormData();
     formData.append("file", file);
     const uploadRes = await axios.post(
-      `${API_BASE_URL}/year/yearImage`,
+      `${API_SERVER_URL}/year/yearImage`,
       formData
     );
     thumbnailUrl = uploadRes.data.url;
@@ -63,9 +63,9 @@ export async function saveYear(
   const finalPayload = { ...payload, imageUrl: thumbnailUrl };
 
   if (editingId !== null) {
-    await axios.put(`${API_BASE_URL}/year/${editingId}`, finalPayload);
+    await axios.put(`${API_SERVER_URL}/year/${editingId}`, finalPayload);
   } else {
-    await axios.post(`${API_BASE_URL}/year`, finalPayload);
+    await axios.post(`${API_SERVER_URL}/year`, finalPayload);
   }
 }
 
@@ -73,12 +73,12 @@ export async function deleteYear(id: number, imageUrl?: string): Promise<void> {
   if (!window.confirm("Bạn có chắc chắn muốn xóa tin tức này không?")) return;
 
   try {
-    await axios.delete(`${API_BASE_URL}/year/${id}`);
+    await axios.delete(`${API_SERVER_URL}/year/${id}`);
     if (!imageUrl) return;
 
     if (imageUrl) {
       try {
-        await axios.delete(`${API_BASE_URL}/year/delete-image`, {
+        await axios.delete(`${API_SERVER_URL}/year/delete-image`, {
           data: { thumbnailUrl: imageUrl },
         });
         console.log("Phản hồi xóa hình ảnh: Đã xóa thành công");
@@ -110,7 +110,7 @@ export async function deleteCurrentImage(imageUrl: string): Promise<void> {
 
   try {
     const deleteImageRes = await axios.delete(
-      `${API_BASE_URL}/year/delete-image`,
+      `${API_SERVER_URL}/year/delete-image`,
       {
         data: { thumbnailUrl: imageUrl },
       }

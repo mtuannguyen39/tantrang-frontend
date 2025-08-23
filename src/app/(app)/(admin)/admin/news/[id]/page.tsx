@@ -56,7 +56,9 @@ export default function NewsDetailPage() {
 
   async function fetchNewsDetail(id: number) {
     try {
-      const response = await axios.get(`http://localhost:3001/api/news/${id}`);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/${id}`
+      );
       setNews(response.data);
       return response.data;
     } catch (error) {
@@ -90,13 +92,18 @@ export default function NewsDetailPage() {
       return;
 
     try {
-      await axios.delete(`http://localhost:3001/api/news/${newsId}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/${newsId}`
+      );
 
       if (news.thumbnail) {
         try {
-          await axios.delete("http://localhost:3001/api/news/delete-image", {
-            data: { imageUrl: news.thumbnail },
-          });
+          await axios.delete(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/delete-image`,
+            {
+              data: { imageUrl: news.thumbnail },
+            }
+          );
         } catch (imageDeleteError) {
           console.error("Failed to delete image:", imageDeleteError);
         }

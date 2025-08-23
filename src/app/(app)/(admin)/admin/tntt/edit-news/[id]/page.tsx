@@ -47,7 +47,9 @@ export default function EditNewsPage() {
 
   async function fetchTnttData() {
     try {
-      const res = await axios.get(`http://localhost:3001/api/tntt/${tnttId}`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt/${tnttId}`
+      );
       const tnttData: TnttItems = res.data;
       setTitle(tnttData.title);
       setSlug(tnttData.slug || "");
@@ -65,7 +67,9 @@ export default function EditNewsPage() {
   }
 
   async function fetchCategories() {
-    const res = await axios.get(`http://localhost:3001/api/category`);
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
+    );
     setCategories(res.data);
   }
 
@@ -101,7 +105,7 @@ export default function EditNewsPage() {
         formData.append("file", file);
 
         const uploadRes = await axios.post(
-          "http://localhost:3001/api/tntt/upload",
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt/upload`,
           formData
         );
         thumbnailUrl = uploadRes.data.url;
@@ -109,9 +113,12 @@ export default function EditNewsPage() {
         // Delete old image if there is one
         if (currentThumbnailUrl) {
           try {
-            await axios.delete("http://loaclhost/api/news/delete-image", {
-              data: { imageUrl: currentThumbnailUrl },
-            });
+            await axios.delete(
+              `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/delete-image`,
+              {
+                data: { imageUrl: currentThumbnailUrl },
+              }
+            );
           } catch (error) {
             console.error("Failed to delete image on server:", error);
           }
@@ -127,7 +134,10 @@ export default function EditNewsPage() {
         isFeatured,
       };
 
-      await axios.put(`http://localhost:3001/api/tntt/${tnttId}`, payload);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt/${tnttId}`,
+        payload
+      );
 
       alert("Cập nhật tin tức thành công!");
       router.push("/admin/tntt");

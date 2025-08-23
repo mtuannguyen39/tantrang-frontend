@@ -47,7 +47,9 @@ export default function YearsDetailPage() {
 
   async function fetchNewsDetail(id: number) {
     try {
-      const response = await axios.get(`http://localhost:3001/api/years/${id}`);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/years/${id}`
+      );
       setYearItem(response.data);
       return response.data;
     } catch (error) {
@@ -81,13 +83,18 @@ export default function YearsDetailPage() {
       return;
 
     try {
-      await axios.delete(`http://localhost:3001/api/news/${yearsId}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/${yearsId}`
+      );
 
       if (yearItem.imageUrl) {
         try {
-          await axios.delete("http://localhost:3001/api/news/delete-image", {
-            data: { imageUrl: yearItem.imageUrl },
-          });
+          await axios.delete(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/delete-image`,
+            {
+              data: { imageUrl: yearItem.imageUrl },
+            }
+          );
         } catch (imageDeleteError) {
           console.error("Failed to delete image:", imageDeleteError);
         }

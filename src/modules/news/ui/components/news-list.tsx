@@ -31,8 +31,8 @@ export default function NewsList({ liturgicalYearId }: NewsListProps) {
     try {
       const url =
         liturgicalYearId ?
-          `http://localhost:3001/api/news?liturgicalYearId=${liturgicalYearId}`
-        : "http://localhost:3001/api/news";
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news?liturgicalYearId=${liturgicalYearId}`
+        : `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news`;
 
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/news"

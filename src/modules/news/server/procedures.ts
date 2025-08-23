@@ -27,7 +27,7 @@ const API_SERVER_URL = "https://tantrang-backend.onrender.com/api";
 
 export async function getAllNews(): Promise<NewsProps[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/news`);
+    const res = await axios.get(`${API_SERVER_URL}/news`);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tải tin tức", error);
@@ -39,7 +39,7 @@ export async function getNewsDetail(id: number) {
   try {
     const res = await axios.get(
       // `https://tantrang-backend.onrender.com/api/news/${id}`
-      `${API_BASE_URL}/news/${id}`
+      `${API_SERVER_URL}/news/${id}`
     );
     return res.data;
   } catch (err) {
@@ -48,12 +48,12 @@ export async function getNewsDetail(id: number) {
 }
 
 export async function gettAllCategories(): Promise<Category[]> {
-  const res = await axios.get(`${API_BASE_URL}/category`);
+  const res = await axios.get(`${API_SERVER_URL}/category`);
   return res.data;
 }
 
 export async function getAllLiturgicalYear(): Promise<LiturgicalYear[]> {
-  const res = await axios.get(`${API_BASE_URL}/year`);
+  const res = await axios.get(`${API_SERVER_URL}/year`);
   return res.data;
 }
 
@@ -68,7 +68,7 @@ export async function createNews(
     const formData = new FormData();
     formData.append("file", file);
     const uploadRes = await axios.post(
-      `${API_BASE_URL}/news/uploads`,
+      `${API_SERVER_URL}/news/uploads`,
       formData
     );
     thumbnailUrl = uploadRes.data.url;
@@ -78,10 +78,10 @@ export async function createNews(
 
   if (editingId !== null) {
     // Cập nhật news
-    await axios.put(`${API_BASE_URL}/news/${editingId}`, finalPayload);
+    await axios.put(`${API_SERVER_URL}/news/${editingId}`, finalPayload);
   } else {
     // Thêm mới sản phẩm
-    await axios.post(`${API_BASE_URL}/news`, finalPayload);
+    await axios.post(`${API_SERVER_URL}/news`, finalPayload);
   }
 }
 
@@ -89,7 +89,7 @@ export async function getNewsList() {
   try {
     const res = await axios.get(
       // `https://tantrang-backend.onrender.com/api/news/`
-      `http://localhost:3001/api/news/`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/`
     );
     return res.data;
   } catch (err) {

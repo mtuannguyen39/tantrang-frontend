@@ -43,7 +43,9 @@ export default function EditYearsPage() {
 
   async function fetchYearsData() {
     try {
-      const res = await axios.get(`http://localhost:3001/api/year/${yearsId}`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/year/${yearsId}`
+      );
       const yearsData: YearProps = res.data;
       setTitle(yearsData.title);
       setName(yearsData.name || "");
@@ -60,7 +62,9 @@ export default function EditYearsPage() {
   }
 
   async function fetchCategories() {
-    const res = await axios.get(`http://localhost:3001/api/category`);
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
+    );
     setCategories(res.data);
   }
 
@@ -106,7 +110,10 @@ export default function EditYearsPage() {
         categoryId,
       };
 
-      await axios.put(`http://localhost:3001/api/years/${yearsId}`, payload);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/years/${yearsId}`,
+        payload
+      );
 
       alert("Cập nhật năm phụng vụ thành công!");
       router.push("/admin/liturgical-years");

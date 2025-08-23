@@ -46,7 +46,9 @@ export default function TnttDetailPage() {
 
   async function fetchTnttDetail(id: number) {
     try {
-      const response = await axios.get(`http://localhost:3001/api/tntt/${id}`);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt/${id}`
+      );
       setTntt(response.data);
       return response.data;
     } catch (error) {
@@ -80,13 +82,18 @@ export default function TnttDetailPage() {
       return;
 
     try {
-      await axios.delete(`http://localhost:3001/api/news/${tnttId}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/${tnttId}`
+      );
 
       if (tntt.thumbnail) {
         try {
-          await axios.delete("http://localhost:3001/api/news/delete-image", {
-            data: { imageUrl: tntt.thumbnail },
-          });
+          await axios.delete(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/delete-image`,
+            {
+              data: { imageUrl: tntt.thumbnail },
+            }
+          );
         } catch (imageDeleteError) {
           console.error("Failed to delete image:", imageDeleteError);
         }

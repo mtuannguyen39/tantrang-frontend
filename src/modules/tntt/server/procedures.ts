@@ -19,7 +19,7 @@ const API_SERVER_URL = "https://tantrang-backend.onrender.com/api";
 
 export async function getAllTntt(): Promise<TnttProps[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/tntt`);
+    const res = await axios.get(`${API_SERVER_URL}/tntt`);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tải tin tức của Thiếu Nhi Thánh Thể!!!", error);
@@ -31,7 +31,7 @@ export async function getAllTntt(): Promise<TnttProps[]> {
 
 export async function getAllCategories(): Promise<Category[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/category`);
+    const res = await axios.get(`${API_SERVER_URL}/category`);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tải danh mục!!!", error);
@@ -43,7 +43,7 @@ export async function getAllCategories(): Promise<Category[]> {
 
 export async function getTnttDetail(id: number) {
   try {
-    const res = await axios.get(`${API_BASE_URL}/tntt/${id}`);
+    const res = await axios.get(`${API_SERVER_URL}/tntt/${id}`);
     return res.data;
   } catch (err) {
     console.error("Failed to fetch tntt details:", err);
@@ -52,7 +52,9 @@ export async function getTnttDetail(id: number) {
 
 export async function getTnttList() {
   try {
-    const res = await axios.get(`http://localhost:3001/api/tntt`);
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt`
+    );
     return res.data;
   } catch (err) {
     console.error("Failed to fetch TNTT list:", err);

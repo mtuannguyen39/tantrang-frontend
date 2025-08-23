@@ -29,7 +29,7 @@ export default function TnttList() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/tntt"
-        "http://localhost:3001/api/tntt"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tntt`
       );
       setTntt(res.data);
     } catch (error) {

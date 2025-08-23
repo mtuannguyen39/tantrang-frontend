@@ -35,7 +35,9 @@ const Navbar = () => {
 
   useEffect(() => {
     axios
-      .get<LiturgicalYearProps[]>("http://localhost:3001/api/year")
+      .get<
+        LiturgicalYearProps[]
+      >(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/year`)
       .then((res) => setLiturgicalYears(res.data));
   }, []);
 
