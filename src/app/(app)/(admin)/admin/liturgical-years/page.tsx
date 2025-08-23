@@ -7,10 +7,10 @@ import {
   getAllCategories,
   saveYear,
   deleteYear,
-  deleteCurrentImage,
 } from "@/modules/liturgical-year/server/procedures";
+import Link from "next/link";
 
-interface YearItem {
+interface YearProps {
   id: number;
   name: string;
   code: string;
@@ -19,6 +19,7 @@ interface YearItem {
   description: string;
   imageUrl?: string;
   categoryId: number;
+  category?: Category;
   isFeatured?: boolean;
 }
 
@@ -28,20 +29,8 @@ interface Category {
 }
 
 export default function AdminYearPage() {
-  const [liturYear, setLiturYear] = useState<YearItem[]>([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [code, setCode] = useState("");
-  const [name, setName] = useState("");
-  const [year, setYear] = useState<number | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [liturYear, setLiturYear] = useState<YearProps[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [isFeatured, setIsFeatured] = useState<boolean>(false);
-  const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
-    string | undefined
-  >(undefined);
 
   async function fetchYearData() {
     try {
@@ -66,188 +55,88 @@ export default function AdminYearPage() {
     fetchCategoriesData();
   }, []);
 
-  async function handleAddOrUpdate() {
-    try {
-      if (!categoryId) {
-        alert("Vui lòng chọn danh mục");
-        return;
-      }
-
-      const payload: Omit<YearItem, "id"> = {
-        title,
-        description,
-        code,
-        name,
-        year: year ?? 0,
-        imageUrl: currentThumbnailUrl,
-        isFeatured,
-        categoryId,
-      };
-
-      await saveYear(payload, file, editingId);
-
-      setTitle("");
-      setDescription("");
-      setCode("");
-      setName("");
-      setYear(null);
-      setFile(null);
-      setIsFeatured(false);
-      setEditingId(null);
-      setCategoryId(null);
-      setCurrentThumbnailUrl(undefined);
-      fetchYearData();
-    } catch (error) {
-      console.error("Lỗi khi lưu tin tức năm phụng vụ:", error);
-      alert("Lưu tin tức thất bại. Vui lòng thử lại!");
-    }
-  }
-
-  function startEdit(item: YearItem) {
-    setTitle(item.title);
-    setDescription(item.description);
-    setCode(item.code);
-    setName(item.name);
-    setYear(item.year);
-    setFile(null);
-    setIsFeatured(item.isFeatured ?? false);
-    setCategoryId(item.categoryId);
-    setEditingId(item.id);
-    setCurrentThumbnailUrl(item.imageUrl);
-  }
-
-  // async function handleDeleteCurrentImageFromUI() {
-  //   if (!currentThumbnailUrl) return;
-
-  //   try {
-  //     await deleteCurrentImage(currentThumbnailUrl);
-  //     setLiturYear((prevYears) =>
-  //       prevYears.map((y) =>
-  //         y.id === editingId ? { ...y, imageUrl: undefined } : y
-  //       )
-  //     );
-  //     setCurrentThumbnailUrl(undefined);
-  //     setFile(null);
-  //   } catch (error: any) {
-  //     alert(error.message);
-  //   }
-  // }
-
   return (
     <div className="flex min-h-screen bg-[#f9f9ff]">
       <main className="flex-1 p-6">
-        <h1 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-transparent bg-clip-text inline-block">
-          Quản lý tin tức năm phụng vụ
-        </h1>
-
-        {/* Thêm mới tin tức năm phụng vụ */}
-        <div className="bg-white p-4 rounded shadow mb-6">
-          <h2 className="text-lg font-medium mb-4 text-[#2d27ff]">
-            {editingId ? "Chỉnh sửa tin tức" : "Thêm mới tin tức"}
-          </h2>
-          <div className="flex flex-col space-y-3">
-            <input
-              type="text"
-              value={title}
-              placeholder="Mùa Phục Sinh năm A 2025"
-              onChange={(e) => setTitle(e.target.value)}
-              className="border rounded p-2"
-            />
-            <input
-              type="text"
-              value={name}
-              placeholder="Năm A - 2025"
-              onChange={(e) => setName(e.target.value)}
-              className="border rounded p-2"
-              required
-            />
-            <input
-              type="text"
-              value={code}
-              placeholder="Mùa phụng vụ - Ví dụ Mùa Vọng / Mùa Giáng Sinh / Mùa Thường niên ..."
-              onChange={(e) => setCode(e.target.value)}
-              className="border rounded p-2"
-              required
-            />
-            <input
-              type="number"
-              value={year ?? ""}
-              placeholder="Năm phụng vụ - Ví dụ: 2025"
-              className="border rounded p-2"
-              onChange={(e) => setYear(Number(e.target.value))}
-              required
-            />
-            {/* <input
-              type="text"
-              value={title}
-              placeholder="Tiêu đề"
-              onChange={(e) => setTitle(e.target.value)}
-              className="border rounded p-2"
-            /> */}
-            <select
-              className="border p-2 rounded"
-              value={categoryId ?? ""}
-              onChange={(e) => setCategoryId(Number(e.target.value))}
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-transparent bg-clip-text inline-block">
+            Quản lý tin tức năm phụng vụ
+          </h1>
+          <div>
+            <Link
+              href={`/admin/liturgical-years/create-years`}
+              className="bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-white px-4 py-2 rounded-lg hover:opactity-90 transition-opacity"
             >
-              <option value="" disabled>
-                Chọn danh mục
-              </option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-
-            <button
-              onClick={handleAddOrUpdate}
-              className="bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] px-4 py-2 bg-blue-600 text-white rounded hover:opacity-90"
-            >
-              {editingId ? "Cập nhật" : "Thêm mới"}
-            </button>
+              Tạo mới tin tức
+            </Link>
           </div>
         </div>
 
         {/* Danh sách năm phụng vụ */}
         <div>
           <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-transparent bg-clip-text inline-block">
-            Danh sách năm phụng vụ
+            Danh sách năm phụng vụ ({liturYear.length})
           </h2>
-          <ul className="space-y-4">
-            {liturYear.map((item) => (
-              <li
-                key={item.id}
-                className="flex overflow-hidden bg-white rounded-lg shadow-sm cursor-pointer"
-                onClick={() => startEdit(item)}
+
+          {liturYear.length === 0 ?
+            <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+              <p className="text-gray-500 mb-4">Chưa có tin tức nào</p>
+              <Link
+                href="/admin/liturgical-years/create-years"
+                className="bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-white px-4 py-2 rounded-lg hover:opactity-90 transition-opacity"
               >
-                <div className="flex-1 p-4 flex flex-col justify-between">
-                  <div>
-                    <h1 className="text-lg font-bold">Tiêu đề: {item.title}</h1>
-                    <h3 className="text-base font-medium">
-                      Năm phụng vụ: {item.name}
-                    </h3>
-                    <p className="text-base font-medium line-clamp-1 w-196">
-                      Mùa phụng vụ: {item.code}
-                    </p>
-                    <p className="text-base font-medium line-clamp-1 w-196">
-                      Năm: {item.year}
-                    </p>
+                Tạo năm phụng vụ đầu tiên
+              </Link>
+            </div>
+          : <ul className="space-y-4">
+              {liturYear.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex overflow-hidden bg-white rounded-lg shadow-sm"
+                >
+                  <div className="flex-1 p-4 flex flex-col justify-center items-center">
+                    <div>
+                      <h1 className="text-lg font-bold">
+                        Tiêu đề: {item.title}
+                      </h1>
+                      <h3 className="text-base font-medium">
+                        Năm phụng vụ: {item.name}
+                      </h3>
+                      <p className="text-base font-medium line-clamp-1 w-196">
+                        Mùa phụng vụ: {item.code}
+                      </p>
+                      <p className="text-base font-medium line-clamp-1 w-196">
+                        Năm: {item.year}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex justify-end space-x-3">
-                  <button
-                    className="bg-[#ff2525] text-white h-[100%] w-20 rounded cursor-pointer hover:opacity-70"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteYear(item.id);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  <div className="flex flex-col justify-center p-4 space-y-2">
+                    <Link
+                      href={`/admin/liturgical-years/${item.id}`}
+                      className="bg-green-500 text-white px-4 py-2 rounded text-center hover:bg-green-600 transition-colors"
+                    >
+                      Xem chi tiết
+                    </Link>
+                    <Link
+                      href={`/admin/liturgical-years/edit-years/${item.id}`}
+                      className="bg-green-500 text-white px-4 py-2 rounded text-center hover:bg-green-600 transition-colors"
+                    >
+                      Chỉnh sửa
+                    </Link>
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded hover:red-600 transition-color"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteYear(item.id);
+                      }}
+                    >
+                      Xóa
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          }
         </div>
       </main>
     </div>

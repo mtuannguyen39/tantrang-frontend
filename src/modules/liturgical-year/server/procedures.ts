@@ -1,14 +1,15 @@
 import axios from "axios";
 
-interface YearItem {
+interface YearProps {
   id: number;
   name: string;
   code: string;
   year: number;
-  title?: string;
-  description?: string;
+  title: string;
+  description: string;
   imageUrl?: string;
   categoryId: number;
+  category?: Category;
   isFeatured?: boolean;
 }
 
@@ -20,7 +21,7 @@ interface Category {
 const API_BASE_URL = "http://localhost:3001/api";
 const SERVER_URL = "https://tantrang-backend.onrender.com/api";
 
-export async function getAllYear(): Promise<YearItem[]> {
+export async function getAllYear(): Promise<YearProps[]> {
   try {
     const res = await axios.get(`${API_BASE_URL}/year`);
     return res.data;
@@ -43,7 +44,7 @@ export async function getAllCategories(): Promise<Category[]> {
 }
 
 export async function saveYear(
-  payload: Omit<YearItem, "id">,
+  payload: Omit<YearProps, "id">,
   file: File | null,
   editingId: number | null
 ): Promise<void> {

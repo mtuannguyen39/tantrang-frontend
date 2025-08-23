@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import Sidebar from "@/components/admin/Sidebar";
 import { Menu } from "lucide-react";
 import { useState } from "react";
