@@ -230,7 +230,7 @@ export default function TnttDetail() {
                   {relatedTntt.slice(0, 2).map((item) => (
                     <Link
                       key={item.id}
-                      href={`/news/${item.id}`}
+                      href={`/tntt/${item.id}`}
                       className="group block"
                     >
                       <div className="bg-slate-50 rounded-lg overflow-hidden hover:shadow-md transition-all duration-300">
@@ -277,7 +277,7 @@ export default function TnttDetail() {
               {relatedTntt.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/news/${item.id}`}
+                  href={`/tntt/${item.id}`}
                   className="group block"
                 >
                   <div className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all duration-300">
