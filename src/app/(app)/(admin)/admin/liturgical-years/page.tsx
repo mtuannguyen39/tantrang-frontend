@@ -118,7 +118,7 @@ export default function AdminYearPage() {
                       Xem chi tiết
                     </Link>
                     <Link
-                      href={`/admin/liturgical-years/edit-news/${item.id}`}
+                      href={`/admin/liturgical-years/edit-years/${item.id}`}
                       className="bg-green-500 text-white px-4 py-2 rounded text-center hover:bg-green-600 transition-colors"
                     >
                       Chỉnh sửa

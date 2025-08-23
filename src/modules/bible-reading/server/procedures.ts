@@ -28,11 +28,11 @@ interface LiturgicalYear {
 }
 
 const API_BASE_URL = "http://localhost:3001/api";
-const SERVER_URL = "https://tantrang-backend.onrender.com/api";
+const API_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export async function getAllReading(): Promise<BibleReading[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/reading`);
+    const res = await axios.get(`${API_SERVER_URL}/api/reading`);
     return res.data;
   } catch (error) {
     console.error("lỗi khi tải tin tức sách Kinh Thánh:", error);
@@ -42,7 +42,7 @@ export async function getAllReading(): Promise<BibleReading[]> {
 
 export async function getReadingDetail(id: number) {
   try {
-    const res = await axios.get(`${API_BASE_URL}/reading/${id}`);
+    const res = await axios.get(`${API_SERVER_URL}/api/reading/${id}`);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tải chi tiết sách Kinh Thánh:", error);
@@ -54,7 +54,7 @@ export async function getReadingDetail(id: number) {
 
 export async function getAllCategories(): Promise<Category[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/category`);
+    const res = await axios.get(`${API_SERVER_URL}/api/category`);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tải danh mục:", error);
@@ -64,7 +64,7 @@ export async function getAllCategories(): Promise<Category[]> {
 
 export async function getAllLiturgicalYear(): Promise<LiturgicalYear[]> {
   try {
-    const res = await axios.get(`${API_BASE_URL}/year`);
+    const res = await axios.get(`${API_SERVER_URL}/api/year`);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi tải danh sách Năm Phụng Vụ:", error);
@@ -85,7 +85,7 @@ export async function saveReading(
     const formData = new FormData();
     formData.append("file", file);
     const uploadRes = await axios.post(
-      `${API_BASE_URL}/reading/uploadBible`,
+      `${API_SERVER_URL}/api/reading/uploadBible`,
       formData
     );
     thumbnailUrl = uploadRes.data.url;
@@ -94,9 +94,9 @@ export async function saveReading(
   const finalPayload = { ...payload, thumbnail: thumbnailUrl };
 
   if (editingId !== null) {
-    await axios.put(`${API_BASE_URL}/reading/${editingId}`, finalPayload);
+    await axios.put(`${API_SERVER_URL}/api/reading/${editingId}`, finalPayload);
   } else {
-    await axios.post(`${API_BASE_URL}/reading`, finalPayload);
+    await axios.post(`${API_SERVER_URL}/api/reading`, finalPayload);
   }
 }
 
@@ -107,12 +107,12 @@ export async function deleteReading(
   if (!window.confirm("Bạn có chắc chắn muốn xóa tin tức này không?")) return;
 
   try {
-    await axios.delete(`${API_BASE_URL}/reading/${id}`);
+    await axios.delete(`${API_SERVER_URL}/api/reading/${id}`);
     if (!thumbnailUrl) return;
 
     if (thumbnailUrl) {
       try {
-        await axios.delete(`${API_BASE_URL}/reading/delete-image`, {
+        await axios.delete(`${API_SERVER_URL}/api/reading/delete-image`, {
           data: { thumbnailUrl: thumbnailUrl },
         });
         console.log("Phản hồi xóa hình ảnh: Đã xóa thành công!");
@@ -144,7 +144,7 @@ export async function deleteCurrentImage(thumbnailUrl: string): Promise<void> {
 
   try {
     const deleteImageRes = await axios.delete(
-      `${API_BASE_URL}/reading/delete-image`,
+      `${API_SERVER_URL}/api/reading/delete-image`,
       {
         data: { thumbnailUrl: thumbnailUrl },
       }

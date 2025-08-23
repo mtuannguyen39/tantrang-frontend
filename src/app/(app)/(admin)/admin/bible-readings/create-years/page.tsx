@@ -21,22 +21,27 @@ interface LiturgicalYear {
   year: number;
 }
 
-export default function CreateNewsPage() {
+export default function CreateReadingsPage() {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [yearName, setYearName] = useState<LiturgicalYear[]>([]);
+  const [yearsName, setYearsName] = useState<LiturgicalYear[]>([]);
 
   // Form States
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [content, setContent] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [isFeatured, setIsFeatured] = useState<boolean>(false);
+  const [scripture, setScripture] = useState("");
+  const [reading1, setReading1] = useState("");
+  const [reading2, setReading2] = useState("");
+  const [psalm, setPsalm] = useState("");
+  const [alleluia, setAlleluia] = useState("");
+  const [gospel, setGospel] = useState("");
   const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
     string | undefined
   >(undefined);
+  const [file, setFile] = useState<File | null>(null);
+
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [yearId, setYearId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,7 +63,7 @@ export default function CreateNewsPage() {
         // "https://tantrang-backend.onrender.com/api/category"
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/year`
       );
-      setYearName(res.data);
+      setYearsName(res.data);
     } catch (error) {
       console.error("Fetching Liturgical Year error:", error);
     }
@@ -75,7 +80,7 @@ export default function CreateNewsPage() {
       return;
     }
 
-    if (!content.trim()) {
+    if (!gospel.trim()) {
       alert("Vui lòng nhập nội dung!");
       return;
     }
@@ -94,31 +99,40 @@ export default function CreateNewsPage() {
         formData.append("file", file);
 
         const uploadRes = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/upload`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/uploadBible`,
           formData
         );
         thumbnailUrl = uploadRes.data.url;
       }
 
-      const payload = {
+      const payload: any = {
         title,
-        slug: slug || undefined,
-        content: content,
+        scripture,
+        reading1: reading1 || "",
+        reading2: reading2 || "",
+        psalm: psalm || "",
+        alleluia: alleluia || "",
+        gospel: gospel,
+        liturgicalYearId: yearId,
         thumbnail: thumbnailUrl || undefined,
-        yearId,
         categoryId,
-        isFeatured,
       };
 
+      // chỉ thêm slug nếu có
+      if (slug) payload.slug = slug;
+
+      console.log("Payload gửi:", payload);
+
       await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading`,
         payload
       );
 
       alert("Tạo tin tức thành công!");
-      router.push("/admin/news");
-    } catch (error) {
+      router.push("/admin/bible-readings");
+    } catch (error: any) {
       console.error("Failed to create news:", error);
+      console.error("Error response:", error.response?.data);
       alert("Tạo tin tức thất bại. Vui lòng thử lại!");
     } finally {
       setIsSubmitting(false);
@@ -128,10 +142,14 @@ export default function CreateNewsPage() {
   function resetForm() {
     setTitle("");
     setSlug("");
-    setContent("");
+    setReading1("");
+    setReading2("");
+    setPsalm("");
+    setAlleluia("");
+    setGospel("");
     setFile(null);
     setCategoryId(null);
-    setIsFeatured(false);
+    setYearId(null);
     setEditingId(null);
     setCurrentThumbnailUrl(undefined);
   }
@@ -178,42 +196,102 @@ export default function CreateNewsPage() {
               className="border rounded p-2"
             />
             <label className="block text-base font-medium text-gray-700 mb-2">
-              Nội dung của tin tức (Mô tả)
+              Nội dung bài đọc 1
             </label>
             <RichText
-              value={content}
-              onChange={setContent}
-              placeholder="Mô tả"
+              value={reading1}
+              placeholder="Năm A - 2025"
+              onChange={setReading1}
               className="min-h-[150px]"
             />
-            <select
-              className="border p-2 rounded"
-              value={categoryId ?? ""}
-              onChange={(e) => setCategoryId(Number(e.target.value))}
-            >
-              <option value="" disabled>
-                Chọn danh mục
-              </option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-            <select
-              className="border p-2 rounded"
-              value={yearId ?? ""}
-              onChange={(e) => setYearId(Number(e.target.value))}
-            >
-              <option value="" disabled>
-                Chọn năm phụng vụ
-              </option>
-              {yearName.map((y) => (
-                <option key={y.id} value={y.id}>
-                  {y.name} - {y.code} - {y.year}
-                </option>
-              ))}
-            </select>
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung đáp ca
+            </label>
+            <RichText
+              value={psalm}
+              placeholder="Nội dung đáp ca"
+              onChange={setPsalm}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung bài đọc 2
+            </label>
+            <RichText
+              value={reading2}
+              placeholder="Nội dung bài đọc 2"
+              onChange={setReading2}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung alleluia
+            </label>
+            <RichText
+              value={alleluia}
+              placeholder="Nội dung alleluia"
+              onChange={setAlleluia}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung Tin Mừng
+            </label>
+            <RichText
+              value={gospel}
+              placeholder="Nội dung Tin Mừng"
+              onChange={setGospel}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Tên sách / số chương / số câu
+            </label>
+            <input
+              type="text"
+              value={scripture}
+              placeholder="Tên sách / số chương / số câu"
+              onChange={(e) => setScripture(e.target.value)}
+              className="border rounded p-2"
+              required
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Danh mục *
+                </label>
+                <select
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={categoryId ?? ""}
+                  onChange={(e) => setCategoryId(Number(e.target.value))}
+                >
+                  <option value="" disabled>
+                    Chọn danh mục
+                  </option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Năm phụng vụ *
+                </label>
+                <select
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={yearId ?? ""}
+                  onChange={(e) => setYearId(Number(e.target.value))}
+                >
+                  <option value="" disabled>
+                    Chọn năm phụng vụ
+                  </option>
+                  {yearsName.map((y) => (
+                    <option key={y.id} value={y.id}>
+                      {y.name} - {y.code} - {y.year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
             <div className="flex items-center gap-4">
               <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                 Chọn hình ảnh
@@ -249,22 +327,13 @@ export default function CreateNewsPage() {
                 </div>
               )}
             </div>
-            <div className="flex gap-4">
-              <input
-                type="checkbox"
-                disabled
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
-              />
-              <span>Đánh dấu bài viết nổi bật</span>
-            </div>
             <div className="flex justify-center items-center gap-4 pt-4">
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 className="w-full bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] px-6 py-3 bg-blue-600 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                {isSubmitting ? "Đang tạo...." : "Tạo tin tức mới"}
+                {isSubmitting ? "Đang tạo...." : "Tạo lịch phụng vụ mới"}
               </button>
               <button
                 onClick={resetForm}

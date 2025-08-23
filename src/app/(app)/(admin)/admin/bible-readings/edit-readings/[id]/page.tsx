@@ -3,21 +3,33 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Image from "next/image";
-import RichText from "@/components/RichText";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import RichText from "@/components/RichText";
+import Image from "next/image";
 
-interface NewsItem {
+interface BibleReading {
   id: number;
   title: string;
   slug?: string;
-  content: string;
+  scripture: string;
+  reading1?: string;
+  reading2?: string;
+  psalm?: string;
+  alleluia?: string;
+  gospel: string;
   thumbnail?: string;
+  liturgicalYearId: number;
+  category?: Category;
   categoryId: number;
-  isFeatured?: boolean;
-  createdAt: string;
-  yearId: number;
+}
+
+interface YearProps {
+  id: number;
+  name: string;
+  code: string;
+  year: number;
+  title: string;
 }
 
 interface Category {
@@ -25,54 +37,55 @@ interface Category {
   name: string;
 }
 
-interface LiturgicalYear {
-  id: number;
-  title: string;
-  name: string;
-  code: string;
-  year: number;
-}
-
-export default function EditNewsPage() {
+export default function EditYearsPage() {
   const router = useRouter();
   const params = useParams();
-  const newsId = params.id as string;
+  const readingsId = params.id as string;
 
   const [categories, setCategories] = useState<Category[]>([]);
-  const [yearName, setYearName] = useState<LiturgicalYear[]>([]);
+  const [readings, setReadings] = useState<BibleReading[]>([]);
+  const [years, setYears] = useState<YearProps[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Form states
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [content, setContent] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [isFeatured, setIsFeatured] = useState<boolean>(false);
+  const [scripture, setScripture] = useState("");
+  const [reading1, setReading1] = useState("");
+  const [reading2, setReading2] = useState("");
+  const [psalm, setPsalm] = useState("");
+  const [alleluia, setAlleluia] = useState("");
+  const [gospel, setGospel] = useState("");
   const [currentThumbnailUrl, setCurrentThumbnailUrl] = useState<
     string | undefined
   >(undefined);
-  const [yearId, setYearId] = useState<number | null>(null);
+
+  const [file, setFile] = useState<File | null>(null);
+  const [liturgicalYearId, setLiturgicalYearId] = useState<number | null>(null);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function fetchNewsData() {
+  async function fetchReadingsData() {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/${newsId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/${readingsId}`
       );
-      const newsData: NewsItem = res.data;
-      setTitle(newsData.title);
-      setSlug(newsData.slug || "");
-      setContent(newsData.content);
-      setCurrentThumbnailUrl(newsData.thumbnail || "");
-      setCategoryId(newsData.categoryId);
-      setYearId(newsData.yearId);
-      setIsFeatured(newsData.isFeatured || false);
+      const readingsData: BibleReading = res.data;
+      setTitle(readingsData.title);
+      setSlug(readingsData.slug || "");
+      setScripture(readingsData.scripture || "");
+      setReading1(readingsData.reading1 || "");
+      setReading2(readingsData.reading2 || "");
+      setPsalm(readingsData.psalm || "");
+      setAlleluia(readingsData.alleluia || "");
+      setGospel(readingsData.gospel);
+      setLiturgicalYearId(readingsData.liturgicalYearId);
+      setCurrentThumbnailUrl(readingsData.thumbnail || "");
+      setCategoryId(readingsData.categoryId);
     } catch (error) {
       console.error("Error fetching news data:", error);
       alert("Không thể tải dữ liệu tin tức!");
-      router.push("/admin/news");
+      router.push("/admin/bible-readings");
     } finally {
       setLoading(false);
     }
@@ -84,19 +97,18 @@ export default function EditNewsPage() {
     );
     setCategories(res.data);
   }
-
   async function fetchYear() {
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/year`
     );
-    setYearName(res.data);
+    setYears(res.data);
   }
 
   useEffect(() => {
     fetchCategories();
-    fetchNewsData();
+    fetchReadingsData();
     fetchYear();
-  }, [newsId]);
+  }, [readingsId]);
 
   async function handleSubmit() {
     if (!title.trim()) {
@@ -104,7 +116,7 @@ export default function EditNewsPage() {
       return;
     }
 
-    if (!content.trim()) {
+    if (!gospel.trim()) {
       alert("Vui lòng nhập nội dung!");
       return;
     }
@@ -125,7 +137,7 @@ export default function EditNewsPage() {
         formData.append("file", file);
 
         const uploadRes = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/upload`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/uploadBible`,
           formData
         );
         thumbnailUrl = uploadRes.data.url;
@@ -134,7 +146,7 @@ export default function EditNewsPage() {
         if (currentThumbnailUrl) {
           try {
             await axios.delete(
-              `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/delete-image`,
+              `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/delete-image`,
               {
                 data: { imageUrl: currentThumbnailUrl },
               }
@@ -144,27 +156,28 @@ export default function EditNewsPage() {
           }
         }
       }
-
       const payload = {
         title,
-        slug: slug || undefined,
-        content: content,
-        thumbnail: thumbnailUrl || undefined,
-        yearId,
+        scripture,
+        reading1: reading1,
+        reading2: reading2,
+        psalm: psalm,
+        alleluia: alleluia,
+        gospel,
+        liturgicalYearId,
         categoryId,
-        isFeatured,
       };
 
       await axios.put(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/${newsId}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/${readingsId}`,
         payload
       );
 
-      alert("Cập nhật tin tức thành công!");
-      router.push("/admin/news");
+      alert("Cập nhật lịch phụng vụ thành công!");
+      router.push("/admin/bible-readings");
     } catch (error) {
-      console.error("Failed to edit news:", error);
-      alert("Cập nhật tin tức thất bại!");
+      console.error("Failed to edit years:", error);
+      alert("Cập nhật lịch phụng vụ thất bại!");
     } finally {
       setIsSubmitting(false);
     }
@@ -175,7 +188,7 @@ export default function EditNewsPage() {
       <div className="flex min-h-screen bg-[#f9f9ff] items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Đang tải dữ liệu</p>
+          <p className="text-gray-600">Đang tải dữ liệu....</p>
         </div>
       </div>
     );
@@ -194,7 +207,7 @@ export default function EditNewsPage() {
           </button>
 
           <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-transparent bg-clip-text">
-            Tạo tin tức mới
+            Cập nhật lịch phụng vụ
           </h1>
         </div>
 
@@ -213,22 +226,48 @@ export default function EditNewsPage() {
               required
             />
             <label className="block text-base font-medium text-gray-700 mb-2">
-              Slug (có thể có hoặc không)
-            </label>
-            <input
-              type="text"
-              value={slug}
-              placeholder="Slug"
-              onChange={(e) => setSlug(e.target.value)}
-              className="border rounded p-2"
-            />
-            <label className="block text-base font-medium text-gray-700 mb-2">
-              Nội dung của tin tức (Mô tả)
+              Nội dung bài đọc 1
             </label>
             <RichText
-              value={content}
-              onChange={setContent}
-              placeholder="Mô tả"
+              value={reading1}
+              placeholder="Năm A - 2025"
+              onChange={setReading1}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung đáp ca
+            </label>
+            <RichText
+              value={psalm}
+              placeholder="Nội dung đáp ca"
+              onChange={setPsalm}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung bài đọc 2
+            </label>
+            <RichText
+              value={reading2}
+              placeholder="Nội dung bài đọc 2"
+              onChange={setReading2}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung alleluia
+            </label>
+            <RichText
+              value={alleluia}
+              placeholder="Nội dung alleluia"
+              onChange={setAlleluia}
+              className="min-h-[150px]"
+            />
+            <label className="block text-base font-medium text-gray-700 mb-2">
+              Nội dung Tin Mừng
+            </label>
+            <RichText
+              value={gospel}
+              placeholder="Nội dung Tin Mừng"
+              onChange={setGospel}
               className="min-h-[150px]"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -258,13 +297,13 @@ export default function EditNewsPage() {
                 </label>
                 <select
                   className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={yearId ?? ""}
-                  onChange={(e) => setYearId(Number(e.target.value))}
+                  value={liturgicalYearId ?? ""}
+                  onChange={(e) => setLiturgicalYearId(Number(e.target.value))}
                 >
                   <option value="" disabled>
                     Chọn năm phụng vụ
                   </option>
-                  {yearName.map((y) => (
+                  {years.map((y) => (
                     <option key={y.id} value={y.id}>
                       {y.name} - {y.code} - {y.year}
                     </option>
@@ -272,6 +311,7 @@ export default function EditNewsPage() {
                 </select>
               </div>
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Hình ảnh
@@ -319,22 +359,13 @@ export default function EditNewsPage() {
                 )}
               </div>
             </div>
-            <div className="flex gap-4">
-              <input
-                type="checkbox"
-                disabled
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
-              />
-              <span>Đánh dấu bài viết nổi bật</span>
-            </div>
             <div className="flex justify-center items-center gap-4 pt-4">
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 className="w-full bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] px-6 py-3 bg-blue-600 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                {isSubmitting ? "Đang cập nhật...." : "Cập nhật tin tức"}
+                {isSubmitting ? "Đang cập nhật...." : "Cập nhật Lịch phụng vụ"}
               </button>
               <button
                 onClick={() => router.back()}

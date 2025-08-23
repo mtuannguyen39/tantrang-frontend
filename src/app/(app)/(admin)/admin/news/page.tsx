@@ -50,7 +50,7 @@ export default function AdminNewsPage() {
     try {
       const response = await axios.get(
         // "https://tantrang-backend.onrender.com/api/news"
-        "http://localhost:3001/api/news"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news`
       );
       setNews(response.data);
     } catch (error) {
@@ -63,7 +63,7 @@ export default function AdminNewsPage() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/category"
-        "http://localhost:3001/api/category"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
       );
       setCategories(res.data);
     } catch (error) {
@@ -75,7 +75,7 @@ export default function AdminNewsPage() {
     try {
       const res = await axios.get(
         // "https://tantrang-backend.onrender.com/api/category"
-        "http://localhost:3001/api/year"
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/year`
       );
       setYearName(res.data);
     } catch (error) {
@@ -96,7 +96,7 @@ export default function AdminNewsPage() {
       // 1. Gửi yêu cầu xóa tin tức từ database
       await axios.delete(
         // `https://tantrang-backend.onrender.com/api/news/${id}`
-        `http://localhost:3001/api/news/${id}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/${id}`
       );
 
       // 2. Nếu có hình, gửi yêu cầu xóa hình ảnh từ server
@@ -105,7 +105,7 @@ export default function AdminNewsPage() {
           // GỬi đường dẫn tương đối của ảnh để backend xóa
           const deleteImageRes = await axios.delete(
             // "https://tantrang-backend.onrender.com/api/news/delete-image",
-            "http://localhost:3001/api/news/delete-image",
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/news/delete-image`,
             {
               data: {
                 imageUrl: thumbnailUrl, // Đây là nơi backend sẽ extract filename từ URL này
@@ -149,7 +149,7 @@ export default function AdminNewsPage() {
             Quản lý tin tức
           </h1>
           <div>
-            <button className="bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-white px-4 py-2 rounded-lg hover:opactity-90 transition-opacity">
+            <button className="bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
               <Link href={`/admin/news/create-news`}>Tạo mới tin tức</Link>
             </button>
           </div>

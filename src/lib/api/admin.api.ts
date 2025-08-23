@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001";
 
 console.log("[v0] API_BASE_URL configured as:", API_BASE_URL);
 console.log(

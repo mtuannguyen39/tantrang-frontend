@@ -10,17 +10,25 @@ interface Category {
   name: string;
 }
 
+interface ReadingProps {
+  id: number;
+  title: string;
+  reading1?: string;
+  reading2?: string;
+  psalm?: string;
+  alleluia?: string;
+  gospel: string;
+  scripture: string;
+  category?: Category;
+  thumbnail?: string;
+  categoryId: number;
+}
+
 interface YearProps {
   id: number;
   name: string;
   code: string;
-  year: number;
-  title: string;
-  description?: string;
-  imageUrl?: string;
-  categoryId: number;
-  category?: Category;
-  isFeatured?: boolean;
+  year: string;
 }
 
 function markdownToHtml(markdown: string): string {
@@ -39,34 +47,43 @@ export default function YearsDetailPage() {
   const router = useRouter();
   const params = useParams();
   const id = Number(params?.id);
-  const yearsId = params.id as string;
+  const readingsId = params.id as string;
 
-  const [yearItem, setYearItem] = useState<YearProps | null>(null);
-  const [htmlContent, setHtmlContent] = useState<string>("");
+  const [readings, setReadings] = useState<ReadingProps | null>(null);
+  const [htmlReading1, setHtmlReading1] = useState<string>("");
+  const [htmlReading2, setHtmlReading2] = useState<string>("");
+  const [htmlPsalm, setHtmlPsalm] = useState<string>("");
+  const [htmlAlleluia, setHtmlAlleluia] = useState<string>("");
+  const [htmlGospel, setHtmlGospel] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   async function fetchNewsDetail(id: number) {
     try {
-      const response = await axios.get(`http://localhost:3001/api/years/${id}`);
-      setYearItem(response.data);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/${id}`
+      );
+      setReadings(response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching news detail:", error);
       alert("Không thể tải chi tiết tin tức!");
-      router.push("/admin/liturgical-years");
+      router.push("/admin/bible-readings");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    if (!yearsId) return;
+    if (!readingsId) return;
 
     const loadData = async () => {
       const data = await fetchNewsDetail(id);
-      if (data && data.content) {
-        const htmlDataContent = markdownToHtml(data.content);
-        setHtmlContent(htmlDataContent);
+      if (data) {
+        if (data.reading1) setHtmlReading1(markdownToHtml(data.reading1));
+        if (data.reading2) setHtmlReading2(markdownToHtml(data.reading2));
+        if (data.psalm) setHtmlPsalm(markdownToHtml(data.psalm));
+        if (data.alleluia) setHtmlAlleluia(markdownToHtml(data.alleluia));
+        if (data.gospel) setHtmlGospel(markdownToHtml(data.gospel));
       }
     };
 
@@ -75,26 +92,31 @@ export default function YearsDetailPage() {
 
   async function handleDelete() {
     if (
-      !yearItem ||
+      !readings ||
       !window.confirm("Bạn có chắc chắn muốn xóa tin tức này không?")
     )
       return;
 
     try {
-      await axios.delete(`http://localhost:3001/api/news/${yearsId}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/${readingsId}`
+      );
 
-      if (yearItem.imageUrl) {
+      if (readings.thumbnail) {
         try {
-          await axios.delete("http://localhost:3001/api/news/delete-image", {
-            data: { imageUrl: yearItem.imageUrl },
-          });
+          await axios.delete(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reading/delete-image`,
+            {
+              data: { imageUrl: readings.thumbnail },
+            }
+          );
         } catch (imageDeleteError) {
           console.error("Failed to delete image:", imageDeleteError);
         }
       }
 
       alert("Tin tức đã được xóa thành công!");
-      router.push("/admin/liturgical-years");
+      router.push("/admin/bible-readings");
     } catch (error) {
       console.error("Failed to delete news:", error);
       alert("Xóa tin tức thất bại. Vui lòng thử lại!");
@@ -112,13 +134,13 @@ export default function YearsDetailPage() {
     );
   }
 
-  if (!yearItem) {
+  if (!readings) {
     return (
       <div className="flex min-h-screen bg-[#f9f9ff] items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600 mb-4">Không tìm thấy tin tức!</p>
           <Link
-            href="/admin/liturgical-years"
+            href="/admin/bible-readings"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
             Quay lại danh sách
@@ -137,7 +159,7 @@ export default function YearsDetailPage() {
           </h1>
           <div className="flex gap-2">
             <Link
-              href={`/admin/liturgical-years/edit-years/${yearsId}`}
+              href={`/admin/bible-readings/edit-readings/${readingsId}`}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer shadow-sm hover:shadow-md"
             >
               Chỉnh sửa
@@ -160,11 +182,11 @@ export default function YearsDetailPage() {
         {/* News Detail Content */}
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           {/* Header with thumbnail */}
-          {yearItem.imageUrl && (
+          {readings.thumbnail && (
             <div className="relative h-64 md:h-80">
               <Image
-                src={yearItem.imageUrl || "/placeholder.svg"}
-                alt={yearItem.title}
+                src={readings.thumbnail || "/placeholder.svg"}
+                alt={readings.title}
                 fill
                 className="object-cover"
                 priority
@@ -176,22 +198,17 @@ export default function YearsDetailPage() {
             {/* Title and metadata */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
-                {yearItem.isFeatured && (
-                  <span className="inline-block px-2 py-1 text-xs font-bold text-red-600 bg-red-100 rounded-full">
-                    ✨ Nổi bật
-                  </span>
-                )}
-                <span className="text-sm text-gray-500">ID: {yearItem.id}</span>
+                <span className="text-sm text-gray-500">ID: {readings.id}</span>
               </div>
 
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                {yearItem.title}
+                {readings.title}
               </h1>
 
               <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
                 <span>
                   <strong>Danh mục:</strong>{" "}
-                  {yearItem.category?.name || `ID: ${yearItem.categoryId}`}
+                  {readings.category?.name || `ID: ${readings.categoryId}`}
                 </span>
               </div>
             </div>
@@ -199,12 +216,48 @@ export default function YearsDetailPage() {
             {/* Content */}
             <div className="prose max-w-none">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                Nội dung:
+                Nội dung bài đọc 1:
               </h2>
               <div
                 className="text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{
-                  __html: htmlContent || "Không có nội dung ",
+                  __html: htmlReading1 || "Không có nội dung ",
+                }}
+              />
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Nội dung đáp ca:
+              </h2>
+              <div
+                className="text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: htmlPsalm || "Không có nội dung ",
+                }}
+              />
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Nội dung bài đọc 2:
+              </h2>
+              <div
+                className="text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: htmlReading2 || "Không có nội dung ",
+                }}
+              />
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Nội dung alleluia:
+              </h2>
+              <div
+                className="text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: htmlAlleluia || "Không có nội dung ",
+                }}
+              />
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Nội dung đoạn Tin Mừng:
+              </h2>
+              <div
+                className="text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: htmlGospel || "Không có nội dung ",
                 }}
               />
             </div>
