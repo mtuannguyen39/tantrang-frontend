@@ -112,7 +112,7 @@ export default function EditYearsPage() {
       await fetchYear();
     };
     loadData();
-  }, [readingsId]);
+  }, []);
 
   async function handleSubmit() {
     if (!title.trim()) {
