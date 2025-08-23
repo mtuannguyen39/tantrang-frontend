@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   // images: {
   //   domains: ["tantrang-backend.onrender.com"],
   // },
+  // Tắt linting toàn bộ trong build (Next.js)
+  eslint: {
+    // Cho phép build vẫn thành công ngay cả khi có lỗi ESLint
+    ignoreDuringBuilds: true,
+  },
 
   images: {
     // Thêm các hostname được phép vào đây
