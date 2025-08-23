@@ -73,7 +73,7 @@ export default function YearsDetailPage() {
     };
 
     loadData();
-  }, [id]);
+  }, [yearsId]);
 
   async function handleDelete() {
     if (

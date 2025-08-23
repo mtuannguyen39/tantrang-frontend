@@ -88,7 +88,7 @@ export default function YearsDetailPage() {
     };
 
     loadData();
-  }, [id]);
+  }, []);
 
   async function handleDelete() {
     if (

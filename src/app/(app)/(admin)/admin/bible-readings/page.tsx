@@ -119,9 +119,12 @@ export default function AdminReadingPage() {
   }
 
   useEffect(() => {
-    fetchReadingData();
-    fetchCategoriesData();
-    fetchLiturgicalYearData();
+    const loadData = async () => {
+      await fetchReadingData();
+      await fetchCategoriesData();
+      await fetchLiturgicalYearData();
+    };
+    loadData();
   }, []);
 
   async function handleDelete(id: number, thumbnailUrl?: string) {
@@ -184,7 +187,7 @@ export default function AdminReadingPage() {
             Quản lý các sách Kinh Thánh
           </h1>
           <Link
-            href="/admin/bible-readings/create-years"
+            href="/admin/bible-readings/create-readings"
             className="bg-gradient-to-r from-[#ff2cdf] to-[#0014ff] text-white px-4 py-2 rounded-lg hover:opacity-50 transition-opacity"
           >
             Tạo mới tin tức
@@ -214,7 +217,7 @@ export default function AdminReadingPage() {
                   className="flex overflow-hidden bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   {reading.thumbnail && (
-                    <img
+                    <Image
                       src={reading.thumbnail}
                       alt={reading.title}
                       className="w-56 h-full object-cover py-8 px-2"

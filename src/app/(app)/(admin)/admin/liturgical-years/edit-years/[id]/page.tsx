@@ -69,9 +69,12 @@ export default function EditYearsPage() {
   }
 
   useEffect(() => {
-    fetchCategories();
-    fetchYearsData();
-  }, [yearsId]);
+    const loadData = async () => {
+      await fetchCategories();
+      await fetchYearsData();
+    };
+    loadData();
+  }, []);
 
   async function handleSubmit() {
     if (!title.trim()) {
