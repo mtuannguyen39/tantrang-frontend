@@ -1,12 +1,6 @@
-"use client";
-
-import ReadingList from "@/modules/bible-reading/ui/components/reading-list";
+import ReadingListWrapper from "@/modules/bible-reading/ui/components/reading-list-wrapper";
 import Navbar from "@/modules/home/ui/Navbar";
 import { Suspense } from "react";
-
-function ReadingListWrapper() {
-  return <ReadingList />;
-}
 
 export default function BibleReadingsPage() {
   return (
